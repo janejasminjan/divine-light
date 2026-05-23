@@ -18,6 +18,103 @@ const DEFAULT_JSON_ACCEPT = "application/json, application/problem+json";
 let _baseUrl: string | null = null;
 let _authTokenGetter: AuthTokenGetter | null = null;
 
+const PREVIEW_API_MOCK_PATHS = new Set([
+  "/api/users/profile",
+  "/api/auth/user",
+  "/api/progress",
+  "/api/bookmarks",
+  "/api/memorization/srs/due",
+]);
+
+function isLovablePreviewRuntime(): boolean {
+  if (typeof window === "undefined") return false;
+
+  const host = window.location.hostname;
+  return host.endsWith(".lovableproject.com") || host.includes("id-preview--");
+}
+
+function toRequestUrl(input: RequestInfo | URL): URL | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    return new URL(resolveUrl(input), window.location.origin);
+  } catch {
+    return null;
+  }
+}
+
+function getPreviewMockPayload(
+  input: RequestInfo | URL,
+  method: string,
+): unknown | undefined {
+  if (!isLovablePreviewRuntime() || method !== "GET") return undefined;
+
+  const requestUrl = toRequestUrl(input);
+  if (!requestUrl) return undefined;
+
+  if (requestUrl.origin !== window.location.origin) return undefined;
+  if (!PREVIEW_API_MOCK_PATHS.has(requestUrl.pathname)) return undefined;
+
+  const now = new Date().toISOString();
+
+  switch (requestUrl.pathname) {
+    case "/api/users/profile":
+      return {
+        id: "preview-user",
+        displayName: "Preview User",
+        goal: "all",
+        level: "beginner",
+        dailyDurationMinutes: 20,
+        dailyAyahTarget: 3,
+        currentStreak: 0,
+        longestStreak: 0,
+        totalMinutesPracticed: 0,
+        onboardingCompleted: true,
+        tajweedHighlightingEnabled: true,
+        transliterationEnabled: true,
+        primaryTranslationLanguage: "en",
+        preferredReciter: "ar.alafasy",
+        fontSizePreference: "medium",
+        darkMode: false,
+        lastReadSurahId: 1,
+        lastReadAyahId: 1,
+        createdAt: now,
+      };
+
+    case "/api/auth/user":
+      return {
+        user: {
+          id: "preview-user",
+          email: "preview@local.dev",
+          firstName: "Preview",
+          lastName: "User",
+          profileImageUrl: null,
+        },
+        hasPendingGuestData: false,
+      };
+
+    case "/api/progress":
+      return {
+        currentStreak: 0,
+        longestStreak: 0,
+        totalMemorizedAyahs: 0,
+        totalSurahsCompleted: 0,
+        totalMinutesPracticed: 0,
+        ayahsDueForReview: 0,
+        totalAyahsInPlan: 0,
+        percentageMemorized: 0,
+        badges: [],
+      };
+
+    case "/api/bookmarks":
+    case "/api/memorization/srs/due":
+      return [];
+
+    default:
+      return undefined;
+  }
+}
+
 /**
  * Set a base URL that is prepended to every relative request URL
  * (i.e. paths that start with `/`).
@@ -356,6 +453,11 @@ export async function customFetch<T = unknown>(
     if (token) {
       headers.set("authorization", `Bearer ${token}`);
     }
+  }
+
+  const previewMockPayload = getPreviewMockPayload(input, method);
+  if (previewMockPayload !== undefined) {
+    return previewMockPayload as T;
   }
 
   const requestInfo = { method, url: resolveUrl(input) };

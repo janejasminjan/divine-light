@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCompleteOnboarding, OnboardingBodyGoal, OnboardingBodyLevel, getGetUserProfileQueryKey } from "@workspace/api-client-react";
+import { OnboardingBodyGoal, OnboardingBodyLevel, getGetUserProfileQueryKey } from "@workspace/api-client-react";
+import { markOnboardingCompletedLocally } from "@/lib/local-onboarding";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,14 +13,13 @@ export default function Onboarding() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     displayName: "",
     goal: OnboardingBodyGoal.all,
     level: OnboardingBodyLevel.beginner,
     dailyDurationMinutes: 15,
   });
-
-  const completeOnboarding = useCompleteOnboarding();
 
   const handleNext = () => {
     if (step < 3) setStep(step + 1);
@@ -30,16 +30,10 @@ export default function Onboarding() {
   };
 
   const handleSubmit = () => {
-    if (completeOnboarding.isPending) return;
-    completeOnboarding.mutate(
-      { data: formData },
-      {
-        onSuccess: async () => {
-          await queryClient.invalidateQueries({ queryKey: getGetUserProfileQueryKey() });
-          setLocation("/dashboard");
-        },
-      }
-    );
+    setSubmitError(null);
+    markOnboardingCompletedLocally();
+    queryClient.invalidateQueries({ queryKey: getGetUserProfileQueryKey() });
+    setLocation("/dashboard");
   };
 
   const goals = [
@@ -180,6 +174,10 @@ export default function Onboarding() {
                       className="bg-background"
                     />
                   </div>
+
+                  {submitError && (
+                    <p className="text-sm text-destructive">{submitError}</p>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -199,12 +197,7 @@ export default function Onboarding() {
             {step < 3 ? (
               <Button onClick={handleNext}>Next</Button>
             ) : (
-              <Button 
-                onClick={handleSubmit} 
-                disabled={completeOnboarding.isPending}
-              >
-                {completeOnboarding.isPending ? "Setting up..." : "Complete Setup"}
-              </Button>
+              <Button onClick={handleSubmit}>Complete Setup</Button>
             )}
           </div>
         </div>

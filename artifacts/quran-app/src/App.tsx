@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useGetUserProfile } from "@workspace/api-client-react";
+import { isOnboardingCompletedLocally } from "@/lib/local-onboarding";
 import { Layout } from "@/components/layout";
 import { Loader2 } from "lucide-react";
 
@@ -35,6 +36,7 @@ const queryClient = new QueryClient({
 
 function AppContent() {
   const { data: profile, isLoading, error } = useGetUserProfile();
+  const onboardingCompletedLocally = isOnboardingCompletedLocally();
 
   if (isLoading) {
     return (
@@ -45,7 +47,7 @@ function AppContent() {
     );
   }
 
-  if (!profile?.onboardingCompleted) {
+  if (!profile?.onboardingCompleted && !onboardingCompletedLocally) {
     return <Onboarding />;
   }
 

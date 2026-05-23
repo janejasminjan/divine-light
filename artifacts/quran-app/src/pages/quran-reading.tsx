@@ -1717,7 +1717,13 @@ export default function QuranReading() {
       // bail out immediately so the stale callback doesn't restart playback.
       const doPlay = () => {
         if (audioRef.current !== audio) return;
-        audio.play().catch(() => { if (audioRef.current === audio) stopAudio(); });
+        requestAnimationFrame(() => {
+          if (audioRef.current !== audio) return;
+          audio.muted = false;
+          audio.play().catch(() => {
+            if (audioRef.current === audio) stopAudio();
+          });
+        });
       };
 
       const doSeek = () => {
@@ -1730,9 +1736,11 @@ export default function QuranReading() {
         // Special-case: if we're already at the target (e.g. first ayah of
         // surah, from = 0) the browser won't fire seeked — call doPlay directly.
         if (Math.abs(audio.currentTime - targetSec) < 0.05) {
+          audio.muted = true;
           doPlay();
         } else {
           audio.addEventListener("seeked", doPlay, { once: true });
+          audio.muted = true;
           audio.currentTime = targetSec;
         }
       };

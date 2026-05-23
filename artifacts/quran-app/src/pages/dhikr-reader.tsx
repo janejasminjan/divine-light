@@ -237,6 +237,166 @@ interface SectionBlockProps {
   onReset: (id: string) => void;
 }
 
+const DUA_SUBAH_COLLECTION_ID = "dua-e-subah";
+const DUA_SUBAH_COUNTER_ENTRY_ID = "des-p1-tasbih";
+const DUA_SUBAH_BISMILLAH_ENTRY_ID = "des-p1-bismillah";
+
+function toUrduDigits(value: number): string {
+  const urduDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+  return String(value).replace(/\d/g, (digit) => urduDigits[Number(digit)] ?? digit);
+}
+
+interface DuaSubahVerseBlockProps {
+  entry: DhikrEntry;
+  fontSizeIdx: number;
+  showTranslit: boolean;
+  showTranslation: boolean;
+}
+
+function DuaSubahVerseBlock({ entry, fontSizeIdx, showTranslit, showTranslation }: DuaSubahVerseBlockProps) {
+  const sz = FONT_SIZES[fontSizeIdx];
+  const isBismillah = entry.id === DUA_SUBAH_BISMILLAH_ENTRY_ID;
+
+  return (
+    <article className="space-y-2">
+      <p
+        dir="rtl"
+        lang="ar"
+        className={`font-arabic ${sz.arabic} ${sz.lineHeight} text-foreground leading-loose whitespace-pre-line ${isBismillah ? "text-center" : "text-right"}`}
+      >
+        {entry.arabic}
+      </p>
+
+      {entry.count > 1 && (
+        <div className={`flex ${isBismillah ? "justify-center" : "justify-end"}`}>
+          <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+            ({toUrduDigits(entry.count)} بار)
+          </span>
+        </div>
+      )}
+
+      {showTranslit && entry.transliteration && (
+        <>
+          <div className="h-px bg-border/60" />
+          <p className="text-sm italic text-muted-foreground leading-relaxed">
+            {entry.transliteration}
+          </p>
+        </>
+      )}
+
+      {showTranslation && (
+        <>
+          <div className="h-px bg-border/60" />
+          <p className="text-sm text-foreground/80 leading-relaxed">
+            {entry.translation}
+          </p>
+        </>
+      )}
+    </article>
+  );
+}
+
+interface DuaSubahCounterCardProps {
+  entry: DhikrEntry;
+  count: number;
+  onIncrement: () => void;
+  onReset: () => void;
+}
+
+function DuaSubahCounterCard({ entry, count, onIncrement, onReset }: DuaSubahCounterCardProps) {
+  const done = count >= entry.count;
+  const pct = entry.count > 0 ? Math.min((count / entry.count) * 100, 100) : 0;
+
+  return (
+    <article className={`rounded-2xl border p-4 transition-colors ${done ? "border-primary/40 bg-primary/[0.06]" : "border-border bg-card"}`}>
+      <p dir="rtl" lang="ar" className="font-arabic text-2xl leading-[2.8] text-right text-foreground whitespace-pre-line">
+        {entry.arabic}
+      </p>
+
+      <div className="mt-3 h-2 rounded-full bg-border/60 overflow-hidden">
+        <motion.div
+          className="h-full rounded-full bg-primary"
+          animate={{ width: `${pct}%` }}
+          transition={{ type: "spring", stiffness: 180, damping: 24 }}
+        />
+      </div>
+
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <button
+          onClick={onIncrement}
+          className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${done ? "bg-primary/15 text-primary cursor-default" : "bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.98]"}`}
+          aria-label="Increment Dua-e-Subah tasbih counter"
+        >
+          {count} / {entry.count}
+        </button>
+
+        {count > 0 && (
+          <button
+            onClick={onReset}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Reset Dua-e-Subah tasbih counter"
+          >
+            Reset
+          </button>
+        )}
+      </div>
+    </article>
+  );
+}
+
+interface DuaSubahPageProps {
+  section: DhikrSection;
+  fontSizeIdx: number;
+  showTranslit: boolean;
+  showTranslation: boolean;
+  counters: Record<string, number>;
+  onIncrement: (id: string, max: number) => void;
+  onReset: (id: string) => void;
+}
+
+function DuaSubahPage({ section, fontSizeIdx, showTranslit, showTranslation, counters, onIncrement, onReset }: DuaSubahPageProps) {
+  return (
+    <section id={`section-${section.id}`} className="scroll-mt-36 space-y-4">
+      <div className="flex items-center justify-center gap-3 text-center">
+        <span className="h-px flex-1 bg-border/50" />
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.14em]">{section.title}</span>
+        <span className="font-arabic text-sm text-primary/70" dir="rtl">{section.arabicTitle}</span>
+        <span className="h-px flex-1 bg-border/50" />
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-5 space-y-5">
+        {section.entries.map((entry, idx) => {
+          if (entry.id === DUA_SUBAH_COUNTER_ENTRY_ID) {
+            return (
+              <div key={entry.id} className="space-y-5">
+                <DuaSubahCounterCard
+                  entry={entry}
+                  count={counters[entry.id] ?? 0}
+                  onIncrement={() => onIncrement(entry.id, entry.count)}
+                  onReset={() => onReset(entry.id)}
+                />
+                {idx < section.entries.length - 1 && <div className="h-px bg-border/50" />}
+              </div>
+            );
+          }
+
+          return (
+            <div key={entry.id} className="space-y-5">
+              <DuaSubahVerseBlock
+                entry={entry}
+                fontSizeIdx={fontSizeIdx}
+                showTranslit={showTranslit}
+                showTranslation={showTranslation}
+              />
+              {idx < section.entries.length - 1 && <div className="h-px bg-border/50" />}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 function SectionBlock({ section, fontSizeIdx, showTranslit, showTranslation, counters, onIncrement, onReset }: SectionBlockProps) {
   return (
     <div id={`section-${section.id}`} className="scroll-mt-36 space-y-4">
@@ -276,6 +436,7 @@ function SectionBlock({ section, fontSizeIdx, showTranslit, showTranslation, cou
 export default function DhikrReader() {
   const { collectionId } = useParams<{ collectionId: string }>();
   const collection = getCollection(collectionId ?? "");
+  const isDuaSubahCollection = collection?.id === DUA_SUBAH_COLLECTION_ID;
 
   /* Settings — persisted */
   const [fontSizeIdx, setFontSizeIdx] = useState<number>(() => {
@@ -640,16 +801,29 @@ export default function DhikrReader() {
 
               {/* Sections */}
               {collection.sections.map((section) => (
-                <SectionBlock
-                  key={section.id}
-                  section={section}
-                  fontSizeIdx={fontSizeIdx}
-                  showTranslit={showTranslit}
-                  showTranslation={showTranslation}
-                  counters={counters}
-                  onIncrement={increment}
-                  onReset={reset}
-                />
+                isDuaSubahCollection ? (
+                  <DuaSubahPage
+                    key={section.id}
+                    section={section}
+                    fontSizeIdx={fontSizeIdx}
+                    showTranslit={showTranslit}
+                    showTranslation={showTranslation}
+                    counters={counters}
+                    onIncrement={increment}
+                    onReset={reset}
+                  />
+                ) : (
+                  <SectionBlock
+                    key={section.id}
+                    section={section}
+                    fontSizeIdx={fontSizeIdx}
+                    showTranslit={showTranslit}
+                    showTranslation={showTranslation}
+                    counters={counters}
+                    onIncrement={increment}
+                    onReset={reset}
+                  />
+                )
               ))}
 
               {/* Closing note */}

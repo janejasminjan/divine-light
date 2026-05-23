@@ -10,12 +10,19 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as MemorizeRouteImport } from './routes/memorize'
 import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SurahSurahIdRouteImport } from './routes/surah.$surahId'
 
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MemorizeRoute = MemorizeRouteImport.update({
+  id: '/memorize',
+  path: '/memorize',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookmarksRoute = BookmarksRouteImport.update({
@@ -28,35 +35,54 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SurahSurahIdRoute = SurahSurahIdRouteImport.update({
+  id: '/surah/$surahId',
+  path: '/surah/$surahId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bookmarks': typeof BookmarksRoute
+  '/memorize': typeof MemorizeRoute
   '/search': typeof SearchRoute
+  '/surah/$surahId': typeof SurahSurahIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bookmarks': typeof BookmarksRoute
+  '/memorize': typeof MemorizeRoute
   '/search': typeof SearchRoute
+  '/surah/$surahId': typeof SurahSurahIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/bookmarks': typeof BookmarksRoute
+  '/memorize': typeof MemorizeRoute
   '/search': typeof SearchRoute
+  '/surah/$surahId': typeof SurahSurahIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/bookmarks' | '/search'
+  fullPaths: '/' | '/bookmarks' | '/memorize' | '/search' | '/surah/$surahId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/bookmarks' | '/search'
-  id: '__root__' | '/' | '/bookmarks' | '/search'
+  to: '/' | '/bookmarks' | '/memorize' | '/search' | '/surah/$surahId'
+  id:
+    | '__root__'
+    | '/'
+    | '/bookmarks'
+    | '/memorize'
+    | '/search'
+    | '/surah/$surahId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BookmarksRoute: typeof BookmarksRoute
+  MemorizeRoute: typeof MemorizeRoute
   SearchRoute: typeof SearchRoute
+  SurahSurahIdRoute: typeof SurahSurahIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -66,6 +92,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/memorize': {
+      id: '/memorize'
+      path: '/memorize'
+      fullPath: '/memorize'
+      preLoaderRoute: typeof MemorizeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookmarks': {
@@ -82,14 +115,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/surah/$surahId': {
+      id: '/surah/$surahId'
+      path: '/surah/$surahId'
+      fullPath: '/surah/$surahId'
+      preLoaderRoute: typeof SurahSurahIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BookmarksRoute: BookmarksRoute,
+  MemorizeRoute: MemorizeRoute,
   SearchRoute: SearchRoute,
+  SurahSurahIdRoute: SurahSurahIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

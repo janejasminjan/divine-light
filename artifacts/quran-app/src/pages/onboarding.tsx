@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Book, Brain, Target, Globe } from "lucide-react";
+import { ApiError } from "@workspace/api-client-react/src/custom-fetch";
 
 export default function Onboarding() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     displayName: "",
     goal: OnboardingBodyGoal.all,
@@ -31,12 +33,20 @@ export default function Onboarding() {
 
   const handleSubmit = () => {
     if (completeOnboarding.isPending) return;
+    setSubmitError(null);
     completeOnboarding.mutate(
       { data: formData },
       {
         onSuccess: async () => {
           await queryClient.invalidateQueries({ queryKey: getGetUserProfileQueryKey() });
           setLocation("/dashboard");
+        },
+        onError: (error) => {
+          if (error instanceof ApiError) {
+            setSubmitError(`Setup failed (${error.status}). Please try again.`);
+            return;
+          }
+          setSubmitError("Setup failed. Please try again.");
         },
       }
     );
@@ -180,6 +190,10 @@ export default function Onboarding() {
                       className="bg-background"
                     />
                   </div>
+
+                  {submitError && (
+                    <p className="text-sm text-destructive">{submitError}</p>
+                  )}
                 </div>
               </motion.div>
             )}

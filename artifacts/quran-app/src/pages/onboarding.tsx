@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { ApiError, useCompleteOnboarding, OnboardingBodyGoal, OnboardingBodyLevel, getGetUserProfileQueryKey } from "@workspace/api-client-react";
+import { markOnboardingCompletedLocally } from "@/lib/local-onboarding";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -37,11 +38,17 @@ export default function Onboarding() {
       { data: formData },
       {
         onSuccess: async () => {
+          markOnboardingCompletedLocally();
           await queryClient.invalidateQueries({ queryKey: getGetUserProfileQueryKey() });
           setLocation("/dashboard");
         },
         onError: (error) => {
           if (error instanceof ApiError) {
+            if (error.status === 404 || error.status >= 500) {
+              markOnboardingCompletedLocally();
+              setLocation("/dashboard");
+              return;
+            }
             setSubmitError(`Setup failed (${error.status}). Please try again.`);
             return;
           }

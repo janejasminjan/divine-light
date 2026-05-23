@@ -37,11 +37,11 @@ function SearchPage() {
   const { data } = useSuspenseQuery(searchAyahsQueryOptions(q, lang));
 
   const handleQueryChange = (value: string) => {
-    navigate({ search: (prev) => ({ ...prev, q: value }) });
+    navigate({ search: { q: value, lang } });
   };
 
   const handleLanguageChange = (value: SupportedLanguage) => {
-    navigate({ search: (prev) => ({ ...prev, lang: value }) });
+    navigate({ search: { q, lang: value } });
   };
 
   return (

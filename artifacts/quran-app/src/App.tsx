@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Switch, Route, Router as WouterRouter, Redirect } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -35,10 +36,26 @@ const queryClient = new QueryClient({
 });
 
 function AppContent() {
-  const { data: profile, isLoading, error } = useGetUserProfile();
+  const { data: profile, isLoading } = useGetUserProfile();
   const onboardingCompletedLocally = isOnboardingCompletedLocally();
+  const [profileLoadTimedOut, setProfileLoadTimedOut] = useState(false);
 
-  if (isLoading) {
+  useEffect(() => {
+    if (!isLoading) {
+      setProfileLoadTimedOut(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setProfileLoadTimedOut(true), 1500);
+    return () => window.clearTimeout(timer);
+  }, [isLoading]);
+
+  const profileRecord =
+    profile && typeof profile === "object" && !Array.isArray(profile)
+      ? (profile as Record<string, unknown>)
+      : null;
+  const serverOnboardingCompleted = profileRecord?.onboardingCompleted === true;
+
+  if (isLoading && !onboardingCompletedLocally && !profileLoadTimedOut) {
     return (
       <div className="min-h-screen w-full flex flex-col items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary opacity-50 mb-4" />
@@ -47,7 +64,7 @@ function AppContent() {
     );
   }
 
-  if (!profile?.onboardingCompleted && !onboardingCompletedLocally) {
+  if (!serverOnboardingCompleted && !onboardingCompletedLocally) {
     return <Onboarding />;
   }
 

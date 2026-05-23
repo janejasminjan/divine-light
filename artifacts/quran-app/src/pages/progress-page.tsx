@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useMemo, useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   useGetProgress,
@@ -43,6 +43,8 @@ export default function ProgressPage() {
   const { data: surahStats, isLoading: loadingSurahs } = useGetSurahStats({
     query: { queryKey: getGetSurahStatsQueryKey() },
   });
+  const heatmapList = useMemo(() => (Array.isArray(heatmap) ? heatmap : []), [heatmap]);
+  const surahStatsList = useMemo(() => (Array.isArray(surahStats) ? surahStats : []), [surahStats]);
 
   /* Measure the heatmap container so cells fill width without scrolling */
   const heatmapRef = useRef<HTMLDivElement>(null);
@@ -73,7 +75,7 @@ export default function ProgressPage() {
 
   // Build heatmap — last 12 months
   const heatmapMap: Record<string, number> = {};
-  heatmap?.forEach((d) => { heatmapMap[d.date] = d.count; });
+  heatmapList.forEach((d) => { heatmapMap[d.date] = d.count; });
 
   const today = new Date();
   const days: { date: string; count: number }[] = [];
@@ -198,14 +200,14 @@ export default function ProgressPage() {
       </Card>
 
       {/* Per-surah stats */}
-      {surahStats && surahStats.length > 0 && (
+      {surahStatsList.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Per-Surah Progress</CardTitle>
             <CardDescription>Memorization completion by Surah</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {surahStats
+            {surahStatsList
               .sort((a, b) => b.percentageMemorized - a.percentageMemorized)
               .map((stat) => (
                 <div key={stat.surahId}>

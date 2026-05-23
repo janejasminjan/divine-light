@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -63,6 +63,7 @@ export default function BookmarksPage() {
   const { data: bookmarks, isLoading } = useGetBookmarks({
     query: { queryKey: getGetBookmarksQueryKey() },
   });
+  const bookmarkList = useMemo(() => (Array.isArray(bookmarks) ? bookmarks : []), [bookmarks]);
   const deleteBookmark = useDeleteBookmark();
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
@@ -80,7 +81,7 @@ export default function BookmarksPage() {
   }
 
   // Auto-bookmarks appear at top, then sorted by date
-  const sorted = [...(bookmarks ?? [])].sort((a, b) => {
+  const sorted = [...bookmarkList].sort((a, b) => {
     if (a.note === AUTO_BOOKMARK_NOTE && b.note !== AUTO_BOOKMARK_NOTE) return -1;
     if (b.note === AUTO_BOOKMARK_NOTE && a.note !== AUTO_BOOKMARK_NOTE) return 1;
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();

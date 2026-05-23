@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -29,12 +29,13 @@ export default function Memorize() {
   const { data: plan, isLoading } = useGetMemorizationPlan(undefined, {
     query: { queryKey: getGetMemorizationPlanQueryKey() },
   });
+  const planList = useMemo(() => (Array.isArray(plan) ? plan : []), [plan]);
   const { data: progress } = useGetProgress({ query: { queryKey: getGetProgressQueryKey() } });
   const updateEntry = useUpdateMemorizationEntry();
 
   const [filter, setFilter] = useState<string>("all");
 
-  const filtered = plan?.filter((e) => filter === "all" || e.status === filter) ?? [];
+  const filtered = planList.filter((e) => filter === "all" || e.status === filter);
 
   const handleStatusChange = (id: number, newStatus: EntryStatus) => {
     updateEntry.mutate(
@@ -57,10 +58,10 @@ export default function Memorize() {
   }
 
   const statusCounts = {
-    not_started: plan?.filter((e) => e.status === "not_started").length ?? 0,
-    in_progress: plan?.filter((e) => e.status === "in_progress").length ?? 0,
-    memorized: plan?.filter((e) => e.status === "memorized").length ?? 0,
-    needs_review: plan?.filter((e) => e.status === "needs_review").length ?? 0,
+    not_started: planList.filter((e) => e.status === "not_started").length,
+    in_progress: planList.filter((e) => e.status === "in_progress").length,
+    memorized: planList.filter((e) => e.status === "memorized").length,
+    needs_review: planList.filter((e) => e.status === "needs_review").length,
   };
 
   return (
@@ -96,10 +97,10 @@ export default function Memorize() {
         })}
       </div>
 
-      {plan && plan.length > 0 && (
+      {planList.length > 0 && (
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">
-            {statusCounts.memorized} of {plan.length} ayahs memorized
+            {statusCounts.memorized} of {planList.length} ayahs memorized
           </span>
           <Button
             variant="outline"
@@ -112,15 +113,15 @@ export default function Memorize() {
         </div>
       )}
 
-      {plan && plan.length > 0 && (
+      {planList.length > 0 && (
         <Progress
-          value={(statusCounts.memorized / plan.length) * 100}
+          value={(statusCounts.memorized / planList.length) * 100}
           className="h-2"
         />
       )}
 
       {/* Entries */}
-      {filtered.length === 0 && plan?.length === 0 ? (
+      {filtered.length === 0 && planList.length === 0 ? (
         <div className="text-center py-16">
           <Brain className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
           <h3 className="font-serif text-lg text-primary mb-2">Your memorization plan is empty</h3>

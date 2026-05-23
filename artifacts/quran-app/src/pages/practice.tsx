@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -672,6 +672,7 @@ function ResultsScreen({ surahId, results, onRestart, onExit }: ResultsProps) {
   const { data: plan } = useGetMemorizationPlan({ surahId }, {
     query: { queryKey: getGetMemorizationPlanQueryKey({ surahId }) },
   });
+  const planList = useMemo(() => (Array.isArray(plan) ? plan : []), [plan]);
 
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -685,7 +686,7 @@ function ResultsScreen({ surahId, results, onRestart, onExit }: ResultsProps) {
   const handleSave = async () => {
     setSaving(true);
     const newAyahs = results
-      .filter(r => !plan?.find(e => e.ayahNumber === r.ayah))
+      .filter(r => !planList.find(e => e.ayahNumber === r.ayah))
       .map(r => r.ayah);
 
     if (newAyahs.length > 0) {

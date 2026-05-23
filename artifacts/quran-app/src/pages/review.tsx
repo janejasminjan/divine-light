@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -59,7 +59,7 @@ export default function Review() {
   const [ayahText, setAyahText] = useState<string | null>(null);
   const [ayahLoading, setAyahLoading] = useState(false);
 
-  const reviews = dueReviews ?? [];
+  const reviews = useMemo(() => (Array.isArray(dueReviews) ? dueReviews : []), [dueReviews]);
   const current = reviews[currentIndex];
   const total = reviews.length;
 

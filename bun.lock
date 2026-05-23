@@ -5,12 +5,12 @@
     "": {
       "name": "workspace",
       "dependencies": {
-        "@replit/vite-plugin-cartographer": "^0.5.5",
-        "@replit/vite-plugin-dev-banner": "^0.1.2",
-        "@replit/vite-plugin-runtime-error-modal": "^0.0.6",
-        "drizzle-orm": "^0.45.2",
-        "drizzle-zod": "^0.8.3",
-        "pg": "^8.21.0",
+        "@replit/vite-plugin-cartographer": "",
+        "@replit/vite-plugin-dev-banner": "",
+        "@replit/vite-plugin-runtime-error-modal": "",
+        "drizzle-orm": "",
+        "drizzle-zod": "",
+        "pg": "",
       },
       "devDependencies": {
         "prettier": "^3.8.1",

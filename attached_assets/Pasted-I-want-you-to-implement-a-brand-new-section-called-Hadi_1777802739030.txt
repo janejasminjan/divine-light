@@ -1,0 +1,290 @@
+I want you to implement a brand new section called Hadith.
+
+This must be a complete Hadith section with:
+
+hadith book listing,
+
+proper population of hadiths under their respective books,
+
+book detail pages,
+
+hadith detail or reader view where needed,
+
+and a search option that works well.
+
+This is an existing app, so first inspect the current codebase and identify:
+
+how navigation is structured,
+
+where top-level sections are defined,
+
+how list/detail pages are built,
+
+how the current Quran and Dhikr/Dua sections are styled,
+
+how search is currently implemented elsewhere if available,
+
+how themes, fonts, spacing, cards, and reader layouts are handled.
+
+Do not rebuild the app from scratch. Do not redesign unrelated screens. Do not change current Quran, Dhikr, Dua, Tajweed, bookmarks, or settings features unless needed for integration. Make minimal, production-quality edits only. Replit works best on existing projects when changes are scoped and explicit.
+
+Main objective
+Add a new Hadith section that feels like a native part of the app and beautifully matches the existing UI.
+
+The section should:
+
+look visually consistent with the current app,
+
+use the same navigation patterns,
+
+use the same theme system,
+
+use the same spacing and typography language,
+
+and feel as polished as the Quran section rather than looking like an external data viewer.
+
+Hadith apps commonly organize content by collections/books and provide keyword search across thousands of narrations, so the new section should support both structured browsing and fast discovery.
+
+Core features to implement
+Implement the Hadith section with the following structure:
+
+Hadith home / landing page
+
+Show a list/grid of hadith books.
+
+Each book should have a title, optional Arabic title if available, short description if available, and hadith count if available.
+
+The UI should be elegant and consistent with the existing app.
+
+Book detail page
+
+When a user opens a book, show the hadiths belonging to that specific book.
+
+Support pagination or lazy loading if the book contains many hadiths.
+
+If the data source provides chapters, group hadiths by chapter.
+
+If chapter support is practical, add chapter browsing.
+
+Hadith reader / item rendering
+
+Each hadith item should render cleanly and readably.
+
+Show Arabic text if available.
+
+Show translation/text language supported by the source used in the app.
+
+Show hadith number/reference.
+
+Show status/grade if available from the chosen source.
+
+Search
+
+Add a proper search experience for hadiths.
+
+Allow search by keyword.
+
+Allow filtering by selected book.
+
+If practical, support Arabic and English search depending on available data.
+
+Show clean search results with book name, hadith number, and snippet.
+Hadith APIs commonly expose parameters for search by English, Arabic, Urdu, book, chapter, and hadith number, which makes a proper book-aware search implementation feasible.
+
+Data-source requirement
+Use a proper hadith data source and structure the section carefully.
+
+Possible source options:
+
+a hadith API that supports books and search,
+
+or a static/local dataset if already available in the app.
+
+The implementation should prefer a structured source that supports:
+
+book metadata,
+
+hadith records,
+
+optional chapters,
+
+optional hadith grades,
+
+and keyword search.
+
+Hadith API documentation publicly describes support for querying by book, chapter, hadith number, and text search, while Sunnah-related APIs and open hadith datasets also expose collection-oriented structures.
+
+Important implementation rules
+Do not hardcode fake hadith content.
+
+Do not create placeholder books and pretend they are complete.
+
+If the selected API requires authentication, set up the integration cleanly and document where the API key should go.
+
+If a complete live API integration is difficult, create the correct architecture first and document what remains.
+
+Populate hadiths under the correct books only.
+
+Do not mix hadiths between books.
+
+Preserve references and numbers if the source provides them.
+
+UI and design requirements
+The Hadith section must beautifully sync with the UI of the already existing app.
+
+That means:
+
+inspect the app’s current visual system first,
+
+reuse the same container widths,
+
+reuse the same cards/list items,
+
+reuse the same header style,
+
+reuse the same reader/detail layout style where possible,
+
+reuse dark/light theme behavior,
+
+reuse current search input style if one exists,
+
+and match the current interaction patterns.
+
+Do not make the Hadith section look like a separate website or admin dashboard.
+
+Navigation requirements
+Add Hadith as a top-level section in the app navigation.
+
+Inside it, support:
+
+Hadith home
+
+Book detail page
+
+Search results page or modal
+
+Optional chapter browsing if supported cleanly
+
+If the app has mobile bottom navigation, drawer navigation, or tabs, integrate Hadith naturally into the same system.
+
+Search UX requirements
+The search experience should be polished:
+
+a prominent search field at the top of the Hadith section,
+
+instant or submit-based search depending on the current app architecture,
+
+loading state,
+
+empty state,
+
+no-results state,
+
+and proper error state.
+
+Search results should show:
+
+hadith snippet,
+
+book name,
+
+hadith number/reference,
+
+and tap to open full hadith.
+
+If practical, include filters such as:
+
+all books / selected book,
+
+Arabic / English depending on available fields,
+
+chapter filter if data supports it.
+
+Apps focused on large hadith libraries commonly highlight precise keyword search and book filtering as core discovery features, so search should be treated as a first-class feature, not an afterthought.
+
+Please work in this order:
+
+Inspect the existing app architecture.
+
+Identify where to add the new Hadith navigation entry.
+
+Review existing list/detail/search UI patterns to reuse them.
+
+Choose the best hadith data source for this app.
+
+Build the hadith data layer with books, hadith items, and search support.
+
+Add the Hadith landing page.
+
+Add book detail pages and populate hadiths correctly by book.
+
+Add hadith search with filters and result navigation.
+
+Match the styling to the existing app.
+
+Test the section for performance, empty states, and theme consistency.
+
+Performance requirements
+Do not load thousands of hadiths into the UI at once if avoidable.
+
+Use pagination, lazy loading, or incremental fetches where needed.
+
+Cache book metadata and common queries if appropriate.
+
+Keep search responsive.
+
+Keep the UI smooth on mobile.
+
+States to handle
+Please implement proper states for:
+
+loading books,
+
+loading hadiths,
+
+loading search results,
+
+empty book,
+
+no search results,
+
+API failure,
+
+offline or retry state if relevant.
+
+Accessibility and reading quality
+Ensure readable typography for hadith text.
+
+Keep touch targets large enough.
+
+Preserve RTL support if Arabic text is displayed.
+
+Make dark mode readable.
+
+Keep contrast strong and calm.
+
+Safety rules
+Do not refactor unrelated app modules.
+
+Do not rewrite current Quran or Dhikr screens.
+
+Do not change current navigation patterns unless necessary to integrate Hadith cleanly.
+
+If a bigger architecture change is needed, explain it before doing it.
+
+Final output required
+When done, show me:
+
+which files were changed,
+
+which files were added,
+
+what hadith source/API was used,
+
+how books are loaded,
+
+how hadiths are mapped under the correct books,
+
+how search works,
+
+and how the UI was matched to the existing app.

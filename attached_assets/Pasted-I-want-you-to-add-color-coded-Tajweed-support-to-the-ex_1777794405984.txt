@@ -1,0 +1,239 @@
+I want you to add color-coded Tajweed support to the existing app without breaking the current reading, translation, audio, bookmarks, navigation, or settings features.
+
+First, inspect the codebase and identify:
+
+where Quran text is loaded,
+
+how ayahs are rendered,
+
+how Arabic text is styled,
+
+where app settings are stored,
+
+and the safest extension points for adding Tajweed annotations and Tajweed UI.
+
+Do not rewrite the app from scratch. Do not redesign unrelated screens. Do not change existing functionality unless required for Tajweed support. Make precise, minimal, production-quality edits. This matches the best practice of using Replit for focused incremental changes rather than broad undirected regeneration.
+
+Goal
+Implement a full color-coded Tajweed layer in my existing Quran app so that Quran text can optionally render with Tajweed highlighting, rule explanations, learning mode, and accessibility settings.
+
+The implementation must treat Tajweed as a semantic annotation layer over Quran text, not as hardcoded visual decoration. Public Tajweed resources and apps use color coding as a recitation-learning aid, but color schemes vary by publisher and app, so the feature must support configurable rule-to-color mappings rather than assuming one fixed universal palette.
+
+Important constraints
+Preserve the canonical Quran text already used in the app.
+
+Do not permanently inject HTML styling into stored Quran text.
+
+Keep Tajweed annotations separate from the base text.
+
+Do not break Arabic shaping, ligatures, or harakat rendering.
+
+Do not assume one universal Tajweed color palette, because public Tajweed systems differ in both color choice and rule grouping.
+
+Do not rely on color alone; add accessibility alternatives.
+
+Keep existing app performance acceptable.
+
+Keep the current UI style unless a small extension is needed for the Tajweed feature.
+
+Features to add
+Add the following to the existing app:
+
+Tajweed toggle
+
+Setting to turn Tajweed colors on and off.
+
+Plain Quran mode must remain available.
+
+Tajweed rendering
+
+Render Arabic Quran text with color-coded Tajweed segments.
+
+Color the correct letters or spans only.
+
+Merge adjacent identical rule spans to avoid unnecessary DOM fragmentation.
+
+Preserve RTL layout and Quran readability.
+
+Tajweed themes
+Add at least 4 selectable display themes:
+
+Classic vivid Tajweed theme
+
+Soft reading theme
+
+High-contrast theme
+
+Color-blind-safe theme using patterns, underlines, borders, or non-color indicators
+
+Because Tajweed mushaf color systems vary across sources, the app must use semantic rule IDs mapped to theme palettes rather than hardcoded colors inside rendering logic.
+
+Tajweed settings
+Add a dedicated Tajweed settings section with:
+
+Tajweed on/off
+
+Theme selector
+
+Show legend on/off
+
+Tap for rule explanation on/off
+
+Learning mode on/off
+
+Highlight selected rule only
+
+Reduce color saturation
+
+Use patterns with colors
+
+High contrast mode
+
+Reset Tajweed settings
+
+Legend
+
+Show a legend of Tajweed rules currently supported.
+
+Each item should display the rule name, color/pattern, and short explanation.
+
+Legend visibility should be toggleable.
+
+Tap interaction
+When the user taps or clicks a Tajweed-colored segment:
+
+Show the rule name
+
+Show a short explanation
+
+Show an optional longer explanation
+
+Show category such as elongation, concealment, merging, nasalization, echo, silence, or emphasis
+
+Tajweed-focused Quran apps publicly describe detailed Tajweed tokens and explanations, so the interaction model should expose educational details rather than color only.
+
+Learning mode
+
+Allow the user to focus on a single Tajweed rule at a time.
+
+When enabled, mute all other rule colors and highlight only the selected rule.
+
+Show example ayahs where possible.
+
+Keep the interaction simple and reading-friendly.
+
+Accessibility
+
+Support a non-color indicator system for rule types.
+
+Add an accessibility-friendly high contrast mode.
+
+Ensure the feature remains usable for users with reduced color discrimination.
+
+Do not make understanding dependent on hue alone.
+
+Architecture requirements
+Implement this in a clean, extensible way.
+
+1. Base Quran text layer
+Use the app’s existing Quran text source as the canonical content. Keep it untouched. Tanzil’s Quran resources emphasize structured UTF-8 Quran text suitable for processing, which supports the idea of keeping text and annotation separate.
+
+2. Tajweed annotation layer
+Create a separate annotation structure for Tajweed spans. Each annotation should support:
+
+surahId
+
+ayahId
+
+startIndex
+
+endIndex
+
+ruleId
+
+optional subruleId
+
+optional priority
+
+optional notes
+
+Do not store only pre-split HTML fragments if a structured index-based model is possible.
+
+3. Rule metadata layer
+Create a rule registry that contains:
+
+stable rule ID
+
+display name
+
+short description
+
+long description
+
+category
+
+default color token
+
+optional accessibility marker
+
+4. Theme layer
+Create Tajweed themes that map rule IDs to visual styles. Themes must be swappable without changing the annotation data.
+
+Tajweed rule model
+At minimum, support categories commonly found in public color-coded Tajweed references:
+
+Madd / elongation
+
+Ghunnah
+
+Ikhfa
+
+Idgham
+
+Iqlab
+
+Qalqalah
+
+Silent / not pronounced letters
+
+Meem sakinah cases
+
+Noon sakinah / tanween cases
+
+Optional emphasis categories where relevant
+
+Public Tajweed color references commonly list categories like Madd, Ikhfa, Ghunnah, Idgham, Iqlab, Qalqalah, and silent letters, though the precise breakdown varies by source.
+
+Data-source strategy
+If the app already has Tajweed-annotated data, adapt it into the new annotation model.
+
+If the app does not have Tajweed data yet:
+
+add support for loading a pre-annotated Tajweed dataset,
+
+keep that dataset separate from the core Quran text,
+
+and build an adapter that converts the dataset into renderable spans.
+
+Prefer pre-annotated Tajweed data over trying to derive every Tajweed rule algorithmically from raw text in this first implementation, because publisher conventions and rule segmentation vary. Public Tajweed systems differ enough that a configurable annotation pipeline is safer and easier to validate.
+
+Rendering requirements
+Update the existing Quran text renderer so it can:
+
+render plain text mode,
+
+or render Tajweed-enhanced mode from annotations.
+
+Implementation details:
+
+parse ayah text into indexed segments,
+
+apply Tajweed annotations,
+
+merge adjacent spans with identical styling,
+
+render semantic spans like data-rule="ikhfa" rather than deeply nested arbitrary markup,
+
+preserve Arabic shaping and diacritic placement.
+
+Do not wrap every single code point in a separate element unless absolutely necessary for correctness.

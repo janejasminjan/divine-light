@@ -1,0 +1,392 @@
+I want to add optional sign up and login.
+
+This means:
+
+the app must still be usable without logging in,
+
+but if a user chooses to sign up or log in, their personal data must be saved and restored whenever they log in again,
+
+and every user’s data must be stored separately and securely,
+
+with proper atomicity / transactional integrity for writes.
+
+Please implement this in a production-quality way inside the existing app with minimal safe changes.
+
+First step: inspect the app
+Before changing anything:
+
+Inspect the current codebase.
+
+Identify the frontend stack, backend stack, and database situation.
+
+Identify where app state is currently stored.
+
+Identify which user data should remain guest/local only and which should become account-backed sync data.
+
+Identify the safest way to add authentication without breaking the existing app.
+
+Do not rebuild the app from scratch.
+Do not refactor unrelated features.
+Do not redesign the UI unnecessarily.
+Make minimal, well-structured, maintainable edits only. Replit prompting guidance recommends clear, staged instructions for editing existing apps, and Replit Auth is intended to simplify adding secure login flows.
+
+Main product requirement
+Implement optional authentication with these behaviors:
+
+Guest mode
+Users can open and use the app without signing up.
+
+Guest usage should still work for basic features.
+
+If the app currently stores local state for guests, preserve that behavior where reasonable.
+
+Signed-in mode
+Users can sign up or log in using a secure auth system.
+
+After login, each user gets their own separate account and own separate stored data.
+
+When the same user logs in later, their own saved data must be restored.
+
+User A must never see User B’s data.
+
+If a user uses multiple devices, their synced account data should be available after login.
+
+Auth systems such as Firebase Authentication are specifically designed so a user’s identity can be used to securely store personalized cloud data across devices, and Replit Auth is positioned as a secure built-in way to add login and user management to Replit apps.
+
+Authentication requirements
+Implement secure authentication using the best fit for the current app.
+
+If the app is on Replit and can use Replit-native auth cleanly, prefer Replit Auth. Replit describes it as providing secure login, social sign-in options, and user information stored in the app database.
+
+If the app architecture already uses Firebase or a better-suited auth stack, use a proper auth provider such as:
+
+email/password,
+
+Google sign-in if practical,
+
+session handling,
+
+persistent login,
+
+sign out,
+
+optional password reset if email/password is used.
+
+At minimum support:
+
+sign up,
+
+log in,
+
+log out,
+
+persistent authenticated session,
+
+protected per-user data access.
+
+Optional login UX
+Because login is optional:
+
+do not block the whole app behind auth,
+
+allow “Continue as Guest,”
+
+show gentle prompts for sign-in only where syncing/saving matters,
+
+explain the benefit: “Sign in to sync your data across devices.”
+
+Per-user data isolation
+Implement a clear user-data ownership model.
+
+Every stored user record must be linked to a unique authenticated user ID such as:
+
+userId,
+
+uid,
+
+or provider-backed account ID.
+
+All synced user data must be stored under that user only.
+
+Examples of per-user data:
+
+bookmarks,
+
+favorites,
+
+reading progress,
+
+last opened surah / hadith / dhikr section,
+
+notes,
+
+settings that should roam across devices,
+
+saved searches,
+
+custom preferences.
+
+
+Suggested structure:
+
+ts
+users/{userId}/profile
+users/{userId}/preferences
+users/{userId}/bookmarks
+users/{userId}/readingProgress
+users/{userId}/favorites
+users/{userId}/notes
+
+
+Do not use a shared flat table without ownership constraints.
+Do not trust only client-side filtering for user isolation.
+
+Atomicity / transactional integrity
+This is important: I want proper atomicity.
+
+All multi-step data writes that must succeed together should use:
+
+database transactions,
+
+atomic batch writes,
+
+or server-side guarded write operations depending on the stack.
+
+Database atomicity means a set of related operations should succeed entirely or fail entirely, not leave half-written state.
+
+Examples where atomicity is required:
+
+creating a user profile + default preferences + initial metadata after sign-up,
+
+saving bookmark + updating reading progress together,
+
+moving guest local data into a signed-in account during account linking,
+
+updating favorites count / item relation if both are stored,
+
+syncing multiple dependent preference fields together.
+
+If using Firebase, use:
+
+Firestore transactions or batched writes for grouped operations,
+
+authenticated security rules per user,
+
+and never rely only on frontend state for correctness. Firebase docs position auth as the basis for secure cloud-backed user experiences.
+
+If using another database:
+
+implement proper transactions at the database layer,
+
+ensure rollback on failure,
+
+ensure unique constraints on user/account identifiers.
+
+Guest-to-account migration
+Implement an optional migration flow:
+
+If a guest user has local data and then signs up/logs in:
+
+detect local guest data,
+
+ask whether they want to merge/import it into their account,
+
+migrate it safely,
+
+do this atomically where possible,
+
+avoid duplicates,
+
+mark migrated records to prevent repeated imports.
+
+This is an important improvement that is often missed and should be included.
+
+Security requirements
+Please include these improvements, even if I didn’t explicitly ask for them:
+
+Access control
+Enforce per-user authorization in the backend/database.
+
+A user must only read/write their own records.
+
+Validation
+Validate input on the server side as well as client side.
+
+Validate required fields, field sizes, and allowed values.
+
+Unique identity
+Enforce uniqueness of primary login identity such as email/provider account.
+
+Do not manage uniqueness in a fragile client-only way. Discussions around per-user storage and uniqueness highlight that this must be handled centrally, not by isolated client logic.
+
+Session safety
+Use secure sessions/tokens.
+
+Handle token expiration or auth refresh correctly.
+
+Make logout fully clear user-sensitive local state where needed.
+
+Sensitive data hygiene
+Never store passwords manually.
+
+Never expose one user’s data in global queries.
+
+Avoid putting sensitive personal data in insecure local storage unless absolutely necessary.
+
+UX flows to implement
+1. Authentication entry
+Add:
+
+Sign Up
+
+Log In
+
+Continue as Guest
+
+2. Account area
+Add an account/settings screen showing:
+
+logged-in user identity,
+
+sign out button,
+
+sync status,
+
+option to import guest data if pending,
+
+optional delete account flow if feasible.
+
+3. Save prompts
+For actions like bookmark/favorite:
+
+if guest: either save locally or show “Sign in to sync across devices.”
+
+if signed in: save to the user’s cloud-backed data store.
+
+4. Restore on login
+When a user logs in:
+
+load user profile,
+
+load preferences,
+
+load personal data,
+
+hydrate the app state,
+
+handle loading and error states gracefully.
+
+Offline and sync behavior
+Add thoughtful handling for:
+
+guest local storage when offline,
+
+signed-in sync retries if the network fails,
+
+optimistic UI only if rollback is safe,
+
+conflict strategy if the same data changes in multiple places.
+
+If conflict resolution is too large for now, document the chosen strategy clearly, such as:
+
+last write wins,
+
+or server timestamp precedence.
+
+Developer implementation plan
+Please work in this order:
+
+Inspect the existing app architecture.
+
+Decide the best auth approach for this app, preferably Replit Auth if it fits naturally. Replit explicitly offers built-in auth intended to simplify secure login integration.
+
+Identify all user-specific data currently in the app.
+
+Separate guest-local data from account-synced data.
+
+Add sign-up, login, logout, and guest mode flows.
+
+Add per-user data models and backend storage.
+
+Add atomic transactional writes for all multi-step save flows.
+
+Add guest-to-account migration.
+
+Add account/settings UI.
+
+Test user isolation, persistence, logout, and failure rollback.
+
+Must-have tests
+Please test:
+
+guest can use app without login,
+
+user can sign up,
+
+user can log in again and get their own saved data,
+
+user A cannot access user B’s records,
+
+multi-step write either fully succeeds or fully fails,
+
+logout clears authenticated state,
+
+guest data migration works only once and does not duplicate data.
+
+UI integration
+Keep the auth UI visually consistent with the existing app:
+
+same fonts,
+
+same theme tokens,
+
+same spacing,
+
+same button style,
+
+same cards/sheets/dialog patterns.
+
+Do not make auth screens look like an unrelated template.
+
+Final output required
+When done, show me:
+
+which files were changed,
+
+which auth system was chosen and why,
+
+where per-user data is stored,
+
+how user isolation is enforced,
+
+how atomicity is implemented,
+
+how guest-to-account migration works,
+
+and which future improvements were included beyond my original request.
+
+Improvements to include even if I forgot
+Please also include these enhancements:
+
+email verification if email/password auth is used,
+
+password reset flow,
+
+loading states for login/signup,
+
+friendly auth error handling,
+
+rate-limiting or abuse-aware considerations if backend supports it,
+
+audit-friendly timestamps (createdAt, updatedAt, lastLoginAt),
+
+account deletion flow if practical,
+
+minimal profile system,
+
+session persistence across app restarts,
+
+protected backend routes or database rules,
+
+clear separation between public app data and private user data.
+

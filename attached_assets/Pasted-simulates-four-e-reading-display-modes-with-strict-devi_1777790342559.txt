@@ -1,0 +1,64 @@
+simulates four e-reading display modes with strict, device-specific colour behaviour, not generic light/dark themes. The app should focus on accurate visual modelling of reading surfaces and front-light behaviour.
+
+Core modes to implement:
+
+Kobo Clara Colour / ComfortLight PRO mode: model a creamy paper background with adjustable brightness and warmth, ranging from white daylight to orange candlelight. ComfortLight PRO should behave like a front-light system and support gradual blue-light reduction logic.
+
+Onyx BOOX mode: model split front-light channels using separate white and amber contributions, with independent controls for brightness and warmth blend. The mix should stay paper-like and never look like a glowing LCD.
+
+Kindle App mode: model software themes only, with White, Sepia, and Black options. Add a sepia intensity control, but do not simulate hardware LED warmth for this mode.
+
+Passive reflective paper mode: simulate a natural paper display with no emitted-light glow, matte off-white surface, charcoal text, minimal chroma, and ambient-light-first styling. E Ink-style reading is reflective rather than backlit, so this mode should look calm and non-luminous.
+
+Functional requirements:
+
+Create a side-by-side preview area showing the same text rendered in all 4 modes at once.
+
+Add live controls for brightness, warmth, sepia intensity, contrast, and text density, but only expose controls relevant to each mode.
+
+Use a strict profile system so each mode has its own locked base tokens for background, text, tint, contrast, and luminance ceiling.
+
+Prevent cross-profile colour contamination; changing BOOX warmth must not alter Kindle Sepia or reflective paper mode.
+
+Use smooth transitions when adjusting settings, but final resting colours must match the exact profile values.
+
+Implementation requirements:
+
+Use perceptual colour math such as OKLCH or LAB for tint blending and warmth control.
+
+Separate these values in code: page background tint, text ink colour, front-light intensity, warmth/channel blend, and reflective compensation.
+
+Kobo and BOOX must be implemented as front-lit reading simulations, not backlit displays.
+
+Kindle mode must be implemented as software theme simulation, not hardware light simulation.
+
+Avoid pure white and pure black for default reading surfaces unless the user selects Kindle Black theme.
+
+Keep the UI clean and minimal, like a calibration tool rather than a marketing landing page.
+
+Suggested technical structure:
+
+Frontend only is fine.
+
+Build with a clear component structure.
+
+Create a displayProfiles configuration object for the four modes.
+
+Create a preview renderer that applies each profile consistently.
+
+Create a control panel that dynamically changes based on selected mode.
+
+Add a validation function that checks contrast and prevents invalid hue drift.
+
+UI requirements:
+
+Minimal interface, neutral design, no bright gradients.
+
+Reading previews should look like real reading surfaces, not glossy cards.
+
+Include labels showing each mode name and its active parameters.
+
+Add a reset button for each profile.
+
+Make the app responsive for desktop and tablet.
+

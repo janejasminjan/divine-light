@@ -1,0 +1,729 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Quran Learning and Memorization App API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication and session management
+  - name: users
+    description: User profile and onboarding
+  - name: memorization
+    description: Memorization plan and SRS
+  - name: progress
+    description: Progress tracking and streaks
+  - name: bookmarks
+    description: Bookmarks and notes
+  - name: activity
+    description: Activity logging
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/user:
+    get:
+      operationId: getCurrentAuthUser
+      tags: [auth]
+      summary: Get current authenticated user and guest migration status
+      responses:
+        "200":
+          description: Current auth state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCurrentAuthUserResponse"
+
+  /migrate-guest:
+    post:
+      operationId: migrateGuestData
+      tags: [auth]
+      summary: Migrate guest session data into the authenticated account
+      responses:
+        "200":
+          description: Migration result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MigrateGuestResponse"
+
+  /users/profile:
+    get:
+      operationId: getUserProfile
+      tags: [users]
+      summary: Get user profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "404":
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: updateUserProfile
+      tags: [users]
+      summary: Update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserProfileBody"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /users/onboarding:
+    post:
+      operationId: completeOnboarding
+      tags: [users]
+      summary: Complete onboarding and generate learning path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OnboardingBody"
+      responses:
+        "200":
+          description: Onboarding completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /memorization/plan:
+    get:
+      operationId: getMemorizationPlan
+      tags: [memorization]
+      summary: Get memorization plan entries
+      parameters:
+        - name: surahId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [not_started, in_progress, memorized, needs_review]
+      responses:
+        "200":
+          description: List of memorization entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MemorizationEntry"
+    post:
+      operationId: addToMemorizationPlan
+      tags: [memorization]
+      summary: Add ayah(s) to memorization plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddToMemorizationPlanBody"
+      responses:
+        "200":
+          description: Added entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MemorizationEntry"
+
+  /memorization/plan/{id}:
+    put:
+      operationId: updateMemorizationEntry
+      tags: [memorization]
+      summary: Update memorization entry status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMemorizationEntryBody"
+      responses:
+        "200":
+          description: Updated entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemorizationEntry"
+
+  /memorization/srs/due:
+    get:
+      operationId: getDueReviews
+      tags: [memorization]
+      summary: Get ayahs due for SRS review today
+      responses:
+        "200":
+          description: List of due review entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MemorizationEntry"
+
+  /memorization/srs/review:
+    post:
+      operationId: submitReview
+      tags: [memorization]
+      summary: Submit a review result for an ayah
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitReviewBody"
+      responses:
+        "200":
+          description: Updated entry after review
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemorizationEntry"
+
+  /progress:
+    get:
+      operationId: getProgress
+      tags: [progress]
+      summary: Get overall progress summary
+      responses:
+        "200":
+          description: Progress summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProgressSummary"
+
+  /progress/heatmap:
+    get:
+      operationId: getActivityHeatmap
+      tags: [progress]
+      summary: Get activity heatmap for the past 12 months
+      responses:
+        "200":
+          description: Daily activity counts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HeatmapDay"
+
+  /progress/surah-stats:
+    get:
+      operationId: getSurahStats
+      tags: [progress]
+      summary: Get per-surah memorization stats
+      responses:
+        "200":
+          description: Per-surah stats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SurahStat"
+
+  /activity:
+    post:
+      operationId: logActivity
+      tags: [activity]
+      summary: Log a learning activity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LogActivityBody"
+      responses:
+        "200":
+          description: Activity logged, streak updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActivityResult"
+
+  /bookmarks:
+    get:
+      operationId: getBookmarks
+      tags: [bookmarks]
+      summary: Get all bookmarks
+      responses:
+        "200":
+          description: List of bookmarks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Bookmark"
+    post:
+      operationId: createBookmark
+      tags: [bookmarks]
+      summary: Create a bookmark with optional note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookmarkBody"
+      responses:
+        "200":
+          description: Created bookmark
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bookmark"
+
+  /bookmarks/{id}:
+    delete:
+      operationId: deleteBookmark
+      tags: [bookmarks]
+      summary: Delete a bookmark
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required:
+        - success
+
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          nullable: true
+        firstName:
+          type: string
+          nullable: true
+        lastName:
+          type: string
+          nullable: true
+        profileImageUrl:
+          type: string
+          nullable: true
+      required:
+        - id
+
+    GetCurrentAuthUserResponse:
+      type: object
+      properties:
+        user:
+          anyOf:
+            - $ref: "#/components/schemas/AuthUser"
+            - type: "null"
+        hasPendingGuestData:
+          type: boolean
+      required:
+        - hasPendingGuestData
+
+    MigrateGuestResponse:
+      type: object
+      properties:
+        migrated:
+          type: boolean
+        message:
+          type: string
+      required:
+        - migrated
+        - message
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        goal:
+          type: string
+          enum: [recite, memorize, understand, all]
+        level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        dailyDurationMinutes:
+          type: integer
+        dailyAyahTarget:
+          type: integer
+        currentStreak:
+          type: integer
+        longestStreak:
+          type: integer
+        totalMinutesPracticed:
+          type: integer
+        onboardingCompleted:
+          type: boolean
+        tajweedHighlightingEnabled:
+          type: boolean
+        transliterationEnabled:
+          type: boolean
+        primaryTranslationLanguage:
+          type: string
+        preferredReciter:
+          type: string
+        fontSizePreference:
+          type: string
+          enum: [small, medium, large, extra_large]
+        darkMode:
+          type: boolean
+        lastReadSurahId:
+          type: integer
+        lastReadAyahId:
+          type: integer
+        createdAt:
+          type: string
+      required:
+        - id
+        - goal
+        - level
+        - dailyDurationMinutes
+        - dailyAyahTarget
+        - currentStreak
+        - longestStreak
+        - totalMinutesPracticed
+        - onboardingCompleted
+        - tajweedHighlightingEnabled
+        - transliterationEnabled
+        - primaryTranslationLanguage
+        - preferredReciter
+        - fontSizePreference
+        - darkMode
+        - createdAt
+
+    UpdateUserProfileBody:
+      type: object
+      properties:
+        displayName:
+          type: string
+        goal:
+          type: string
+          enum: [recite, memorize, understand, all]
+        level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        dailyDurationMinutes:
+          type: integer
+        dailyAyahTarget:
+          type: integer
+        tajweedHighlightingEnabled:
+          type: boolean
+        transliterationEnabled:
+          type: boolean
+        primaryTranslationLanguage:
+          type: string
+        preferredReciter:
+          type: string
+        fontSizePreference:
+          type: string
+          enum: [small, medium, large, extra_large]
+        darkMode:
+          type: boolean
+        lastReadSurahId:
+          type: integer
+        lastReadAyahId:
+          type: integer
+
+    OnboardingBody:
+      type: object
+      properties:
+        displayName:
+          type: string
+        goal:
+          type: string
+          enum: [recite, memorize, understand, all]
+        level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        dailyDurationMinutes:
+          type: integer
+      required:
+        - goal
+        - level
+        - dailyDurationMinutes
+
+    MemorizationEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        surahId:
+          type: integer
+        ayahNumber:
+          type: integer
+        status:
+          type: string
+          enum: [not_started, in_progress, memorized, needs_review]
+        srsInterval:
+          type: integer
+        srsEaseFactor:
+          type: number
+        nextReviewDate:
+          type: string
+        reviewCount:
+          type: integer
+        lastReviewDate:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+      required:
+        - id
+        - surahId
+        - ayahNumber
+        - status
+        - srsInterval
+        - srsEaseFactor
+        - reviewCount
+        - createdAt
+
+    AddToMemorizationPlanBody:
+      type: object
+      properties:
+        surahId:
+          type: integer
+        ayahNumbers:
+          type: array
+          items:
+            type: integer
+      required:
+        - surahId
+        - ayahNumbers
+
+    UpdateMemorizationEntryBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [not_started, in_progress, memorized, needs_review]
+      required:
+        - status
+
+    SubmitReviewBody:
+      type: object
+      properties:
+        entryId:
+          type: integer
+        rating:
+          type: string
+          enum: [easy, hard, forgot]
+      required:
+        - entryId
+        - rating
+
+    ProgressSummary:
+      type: object
+      properties:
+        currentStreak:
+          type: integer
+        longestStreak:
+          type: integer
+        totalMemorizedAyahs:
+          type: integer
+        totalSurahsCompleted:
+          type: integer
+        totalMinutesPracticed:
+          type: integer
+        ayahsDueForReview:
+          type: integer
+        totalAyahsInPlan:
+          type: integer
+        percentageMemorized:
+          type: number
+        badges:
+          type: array
+          items:
+            $ref: "#/components/schemas/Badge"
+      required:
+        - currentStreak
+        - longestStreak
+        - totalMemorizedAyahs
+        - totalSurahsCompleted
+        - totalMinutesPracticed
+        - ayahsDueForReview
+        - totalAyahsInPlan
+        - percentageMemorized
+        - badges
+
+    Badge:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        earnedAt:
+          type: string
+      required:
+        - id
+        - name
+        - description
+        - earnedAt
+
+    HeatmapDay:
+      type: object
+      properties:
+        date:
+          type: string
+        count:
+          type: integer
+        minutes:
+          type: integer
+      required:
+        - date
+        - count
+        - minutes
+
+    SurahStat:
+      type: object
+      properties:
+        surahId:
+          type: integer
+        totalAyahs:
+          type: integer
+        memorizedAyahs:
+          type: integer
+        inProgressAyahs:
+          type: integer
+        percentageMemorized:
+          type: number
+      required:
+        - surahId
+        - totalAyahs
+        - memorizedAyahs
+        - inProgressAyahs
+        - percentageMemorized
+
+    LogActivityBody:
+      type: object
+      properties:
+        minutes:
+          type: integer
+        activityType:
+          type: string
+          enum: [reading, memorization, review, listening]
+      required:
+        - minutes
+        - activityType
+
+    ActivityResult:
+      type: object
+      properties:
+        streakUpdated:
+          type: boolean
+        currentStreak:
+          type: integer
+        newBadge:
+          $ref: "#/components/schemas/Badge"
+      required:
+        - streakUpdated
+        - currentStreak
+
+    Bookmark:
+      type: object
+      properties:
+        id:
+          type: integer
+        surahId:
+          type: integer
+        ayahNumber:
+          type: integer
+        note:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+      required:
+        - id
+        - surahId
+        - ayahNumber
+        - createdAt
+
+    CreateBookmarkBody:
+      type: object
+      properties:
+        surahId:
+          type: integer
+        ayahNumber:
+          type: integer
+        note:
+          type: string
+      required:
+        - surahId
+        - ayahNumber

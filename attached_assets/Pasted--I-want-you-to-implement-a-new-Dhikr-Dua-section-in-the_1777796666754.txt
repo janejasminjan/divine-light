@@ -1,0 +1,143 @@
+ I want you to implement a new Dhikr & Dua section in the current app and add Aurad Fathiya using the attached PDF as the source if possible.
+
+This is an existing project, so first inspect the current codebase and identify:
+
+how navigation is structured,
+
+where sections/screens are defined,
+
+how Quran text is currently rendered,
+
+how Arabic text styling is implemented,
+
+how settings/state are stored,
+
+and the safest place to add a new Dhikr & Dua module.
+
+Do not rebuild the app from scratch. Do not redesign unrelated screens. Make precise, production-quality edits only. Replit guidance favors clear, scoped edits for existing apps rather than broad rewrites.
+
+Main goal
+Add a Dhikr & Dua section to the app, and inside it add Aurad Fathiya as a readable structured text experience.
+
+If possible:
+
+extract all readable text from the attached Aurad Fathiya PDF,
+
+clean and structure the extracted content,
+
+and render Aurad Fathiya in the app using the same visual reading style as the Quran text so the experience feels consistent.
+
+If the PDF is text-based, extract the text directly.
+If the PDF is scanned/image-based, attempt OCR extraction.
+If OCR is incomplete or low-confidence, create the ingestion pipeline and mark uncertain sections clearly for later manual review instead of silently inventing text. Arabic PDF OCR is possible, but scan quality affects accuracy, especially for right-to-left text and diacritics.
+
+Important content rules
+Do not hallucinate missing Arabic text.
+
+Do not invent lines that are unclear in the PDF.
+
+If extraction confidence is low for a section, flag it for manual review.
+
+Keep source text separate from UI styling.
+
+Preserve Arabic script carefully.
+
+Maintain RTL rendering and Arabic readability.
+
+If useful, store the extracted Aurad Fathiya text in structured JSON so it can be rendered consistently like Quran content.
+
+Dhikr & Dua section requirements
+Add a new top-level section or module called:
+
+Dhikr & Dua
+
+Inside it, create a structure such as:
+
+Aurad Fathiya
+
+Morning Adhkar (placeholder if not yet available)
+
+Evening Adhkar (placeholder if not yet available)
+
+Daily Duas (placeholder if not yet available)
+
+Favorites / Saved (optional, only if easy to integrate cleanly)
+
+At minimum, fully implement:
+
+Dhikr & Dua landing page
+
+Aurad Fathiya detail page / reading page
+
+The section should be clean, calm, and reading-first. Dhikr apps are typically most useful when text is easy to access, browse, and read without clutter.
+
+Aurad Fathiya requirements
+Implement Aurad Fathiya as a proper reading experience, not a raw PDF viewer.
+
+I want:
+
+extracted text rendered natively inside the app,
+
+not just opening the PDF file in a viewer unless extraction fails,
+
+and the layout should visually match how Quran text is shown in the app as closely as possible.
+
+Specifically:
+
+Use the same Arabic font, spacing rhythm, text alignment, and reading container style as the Quran reader where appropriate.
+
+Keep the same respectful typography system.
+
+Use similar page padding, line height, and dark/light mode behavior.
+
+Reuse existing Arabic text rendering components where possible.
+
+If Quran text has ayah-like blocks or reading cards, adapt that style for Aurad Fathiya in a way that still feels natural for dua/dhikr content.
+
+Reading behavior for Aurad Fathiya
+Aurad Fathiya should support:
+
+continuous reading mode,
+
+structured sections if the source has headings,
+
+proper RTL rendering,
+
+Arabic text display,
+
+optional transliteration/translation placeholders only if the PDF contains them or the app already supports them,
+
+bookmark support if the existing app already has a bookmark pattern,
+
+text size controls if they already exist in the app’s reader settings.
+
+If the content is long, break it into logical sections based on headings or paragraph groups from the PDF.
+
+PDF extraction workflow
+Please do this in order:
+
+Inspect the attached PDF.
+
+Determine whether it contains selectable text or scanned images.
+
+If selectable text exists, extract all text directly.
+
+If it is scanned, attempt OCR extraction.
+
+Clean the extracted text carefully for Arabic RTL display.
+
+Preserve section hierarchy if present.
+
+Store the result in a structured app-friendly format such as JSON.
+
+Render that structured content inside the new Aurad Fathiya reader.
+
+If extraction is partial:
+
+keep successfully extracted sections,
+
+flag uncertain portions,
+
+and create a clear placeholder or review list instead of making up content.
+
+Arabic OCR tools commonly note support for RTL Arabic and connected letters, but extraction quality can vary with scan/image quality, so the implementation should account for imperfect output and review needs.

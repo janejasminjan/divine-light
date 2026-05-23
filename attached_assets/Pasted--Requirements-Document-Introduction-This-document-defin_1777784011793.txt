@@ -1,0 +1,239 @@
+ Requirements Document
+
+## Introduction
+
+This document defines the requirements for a Quran Learning and Memorization App — a mobile and web application designed to help users of all levels learn, recite, and memorize the Quran. The app provides structured learning paths, audio recitation playback, Tajweed guidance, spaced repetition for Hifz (memorization), progress tracking, translations, Tafsir, and offline support. It caters to beginners through advanced learners and supports a consistent daily practice through streaks and reminders.
+
+---
+
+## Glossary
+
+- **App**: The Quran Learning and Memorization application.
+- **User**: A registered individual using the App.
+- **Surah**: A chapter of the Quran (114 total).
+- **Ayah**: A verse within a Surah.
+- **Hifz**: The practice of memorizing the Quran.
+- **Tajweed**: The set of rules governing correct pronunciation and recitation of the Quran.
+- **Reciter**: A professional Quran reciter whose audio recordings are available in the App.
+- **Spaced Repetition System (SRS)**: An algorithm that schedules review of memorized content at increasing intervals to optimize long-term retention.
+- **Streak**: A count of consecutive days a User has completed at least one learning or memorization activity.
+- **Tafsir**: Scholarly commentary and interpretation of Quran verses.
+- **Translation**: A rendering of Quran text in a language other than Arabic.
+- **Juz**: One of 30 equal divisions of the Quran.
+- **Offline Mode**: App functionality available without an active internet connection.
+- **Learning Path**: A structured sequence of lessons and activities tailored to a User's level and goals.
+- **Review Session**: A scheduled SRS-driven session where the User is tested on previously memorized Ayahs.
+- **Onboarding**: The initial setup flow that collects User preferences and establishes a Learning Path.
+- **Progress Dashboard**: A screen displaying the User's memorization progress, streaks, and activity history.
+- **Audio Player**: The in-app component responsible for playing recitation audio.
+- **Tajweed Highlighter**: The UI component that color-codes Tajweed rules within displayed Arabic text.
+- **Notification Service**: The system component responsible for sending reminders and alerts to the User.
+
+---
+
+## Requirements
+
+### Requirement 1: User Onboarding
+
+**User Story:** As a new user, I want to complete an onboarding flow that captures my learning goals and current level, so that the App can create a personalized Learning Path for me.
+
+#### Acceptance Criteria
+
+1. WHEN a User opens the App for the first time, THE App SHALL present an onboarding flow before showing the main interface.
+2. THE App SHALL ask the User to select a learning goal from the options: "Learn to Recite", "Memorize (Hifz)", "Understand Meanings", or "All of the Above".
+3. THE App SHALL ask the User to select a current level from: "Beginner (cannot read Arabic)", "Intermediate (can read Arabic slowly)", or "Advanced (fluent Arabic reader)".
+4. THE App SHALL ask the User to set a daily practice duration goal from: 5, 10, 15, 30, or 60 minutes.
+5. WHEN the User completes the onboarding flow, THE App SHALL generate a personalized Learning Path based on the selected goal, level, and daily duration.
+6. WHEN the User completes the onboarding flow, THE App SHALL save the User's preferences to the User profile.
+7. WHERE the User has previously completed onboarding, THE App SHALL skip the onboarding flow and load the User's existing Learning Path.
+
+---
+
+### Requirement 2: Quran Text Display
+
+**User Story:** As a user, I want to read Quran text clearly in Arabic with optional transliteration, so that I can follow along during recitation and study.
+
+#### Acceptance Criteria
+
+1. THE App SHALL display the full Arabic text of all 114 Surahs and their Ayahs.
+2. THE App SHALL display Ayah numbers inline with the Arabic text.
+3. WHERE the User enables transliteration, THE App SHALL display a phonetic Latin-script transliteration beneath each Ayah.
+4. THE App SHALL allow the User to adjust the Arabic font size between small, medium, large, and extra-large.
+5. THE App SHALL support right-to-left text rendering for all Arabic content.
+6. WHEN the User selects an Ayah, THE App SHALL highlight the selected Ayah and display options to play audio, view translation, or add to memorization plan.
+
+---
+
+### Requirement 3: Audio Recitation Playback
+
+**User Story:** As a user, I want to listen to professional recitations of any Surah or Ayah, so that I can learn correct pronunciation and follow along with the text.
+
+#### Acceptance Criteria
+
+1. THE App SHALL provide audio recitations from a minimum of 5 internationally recognized Reciters.
+2. THE App SHALL allow the User to select a preferred Reciter from the available list.
+3. WHEN the User initiates playback of a Surah, THE Audio Player SHALL play the recitation from the beginning of the Surah.
+4. WHEN the User initiates playback of a specific Ayah, THE Audio Player SHALL play the recitation of that Ayah only.
+5. THE Audio Player SHALL support play, pause, stop, skip to next Ayah, and skip to previous Ayah controls.
+6. THE Audio Player SHALL support repeat modes: repeat Ayah, repeat selection (a range of Ayahs), and repeat Surah.
+7. WHEN audio is playing, THE App SHALL highlight the currently recited Ayah in the text display in real time.
+8. THE Audio Player SHALL support playback speed adjustment between 0.5x, 0.75x, 1.0x, and 1.25x.
+9. IF an audio file fails to load, THEN THE App SHALL display an error message and offer the User the option to retry or select a different Reciter.
+
+---
+
+### Requirement 4: Tajweed Guidance
+
+**User Story:** As a user, I want to see Tajweed rules highlighted in the Arabic text and access explanations, so that I can learn and apply correct recitation rules.
+
+#### Acceptance Criteria
+
+1. WHERE the User enables Tajweed highlighting, THE Tajweed Highlighter SHALL color-code Arabic text according to standard Tajweed rule categories (e.g., Ghunnah, Madd, Qalqalah, Idgham, Ikhfa).
+2. THE App SHALL use a consistent color scheme for each Tajweed rule category throughout the entire Quran text.
+3. WHEN the User taps a highlighted word or letter, THE App SHALL display the name of the applicable Tajweed rule and a brief explanation in the User's selected language.
+4. THE App SHALL provide a dedicated Tajweed rules reference section listing all rules with definitions, examples, and audio demonstrations.
+5. WHERE the User is at the Beginner level, THE App SHALL enable Tajweed highlighting by default during onboarding.
+6. THE App SHALL allow the User to toggle Tajweed highlighting on or off at any time from the reading settings.
+
+---
+
+### Requirement 5: Memorization (Hifz) Tools
+
+**User Story:** As a user who wants to memorize the Quran, I want structured memorization tools that guide me through learning new Ayahs and reviewing previously memorized ones, so that I can build and retain my Hifz effectively.
+
+#### Acceptance Criteria
+
+1. THE App SHALL allow the User to add any Ayah or range of Ayahs to a memorization plan.
+2. WHEN the User begins a memorization session for a new Ayah, THE App SHALL present the Ayah with audio playback, then progressively hide words to test recall.
+3. THE App SHALL support a "listen and repeat" mode where the Audio Player plays an Ayah and the User confirms their repetition before advancing.
+4. THE App SHALL track the memorization status of each Ayah as one of: "Not Started", "In Progress", "Memorized", or "Needs Review".
+5. WHEN the User marks an Ayah as "Memorized", THE App SHALL schedule the Ayah for SRS-based review.
+6. THE App SHALL display the User's total memorized Ayah count and percentage of the Quran memorized on the Progress Dashboard.
+7. THE App SHALL allow the User to set a daily new-Ayah target between 1 and 20 Ayahs per day.
+8. WHEN the User's daily new-Ayah target is reached, THE App SHALL notify the User that the new memorization goal for the day is complete.
+
+---
+
+### Requirement 6: Spaced Repetition System (SRS) for Review
+
+**User Story:** As a user memorizing the Quran, I want the App to schedule my review sessions using spaced repetition, so that I can retain memorized Ayahs long-term with efficient practice.
+
+#### Acceptance Criteria
+
+1. THE App SHALL implement an SRS algorithm to schedule Review Sessions for all Ayahs with a memorization status of "Memorized" or "Needs Review".
+2. WHEN the User completes a Review Session for an Ayah and rates recall as "Easy", THE App SHALL increase the review interval for that Ayah.
+3. WHEN the User completes a Review Session for an Ayah and rates recall as "Hard" or "Forgot", THE App SHALL decrease the review interval and reschedule the Ayah for review within 24 hours.
+4. THE App SHALL display the number of Ayahs due for review on the Progress Dashboard each day.
+5. WHEN the User opens the App and has Ayahs due for review, THE App SHALL prompt the User to start the Review Session.
+6. THE App SHALL present Review Sessions in a mode where the User hears the audio of an Ayah and must identify the correct Ayah text, or recites the Ayah from memory and self-rates recall.
+7. THE App SHALL maintain a review history log for each Ayah, recording the date, recall rating, and resulting interval.
+
+---
+
+### Requirement 7: Progress Tracking and Streaks
+
+**User Story:** As a user, I want to track my learning progress and maintain a daily streak, so that I stay motivated and can see how far I have come.
+
+#### Acceptance Criteria
+
+1. THE Progress Dashboard SHALL display the User's current streak in days, longest streak in days, total memorized Ayahs, total Surahs completed, and total minutes practiced.
+2. WHEN the User completes at least one learning or memorization activity in a calendar day, THE App SHALL increment the User's streak by 1 day.
+3. WHEN the User does not complete any activity for a full calendar day, THE App SHALL reset the User's streak to 0.
+4. THE App SHALL display a visual calendar heatmap on the Progress Dashboard showing activity levels for each day of the past 12 months.
+5. THE App SHALL award the User a badge when the User reaches streak milestones of 7, 30, 100, and 365 days.
+6. WHEN the User earns a badge, THE App SHALL display a congratulatory notification.
+7. THE App SHALL display a per-Surah progress indicator showing the percentage of Ayahs memorized within each Surah.
+
+---
+
+### Requirement 8: Translations and Tafsir
+
+**User Story:** As a user, I want to read translations and Tafsir for any Ayah, so that I can understand the meaning and context of what I am reciting and memorizing.
+
+#### Acceptance Criteria
+
+1. THE App SHALL provide translations of the Quran in a minimum of 10 languages, including English, Arabic (simplified), Urdu, French, Turkish, Indonesian, Bengali, German, Spanish, and Malay.
+2. THE App SHALL allow the User to select a primary translation language from the available list.
+3. WHEN the User views an Ayah, THE App SHALL display the selected translation beneath the Arabic text.
+4. THE App SHALL allow the User to enable a secondary translation for side-by-side comparison.
+5. THE App SHALL provide access to at least 3 Tafsir works (e.g., Ibn Kathir, Al-Jalalayn, Al-Tabari) in the User's selected language where available.
+6. WHEN the User requests Tafsir for an Ayah, THE App SHALL display the Tafsir text in a scrollable panel without leaving the current Surah view.
+7. THE App SHALL allow the User to bookmark Ayahs with personal notes of up to 500 characters.
+
+---
+
+### Requirement 9: Offline Support
+
+**User Story:** As a user, I want to use the App without an internet connection, so that I can continue learning and reviewing even when I am offline.
+
+#### Acceptance Criteria
+
+1. THE App SHALL allow the User to download individual Surahs, Juz, or the entire Quran for offline use.
+2. WHEN a Surah or Juz is downloaded, THE App SHALL make the Arabic text, selected translation, Tajweed highlighting data, and audio recitation for the selected Reciter available without an internet connection.
+3. WHILE the device is offline, THE App SHALL allow the User to access all downloaded content, complete memorization sessions, and complete Review Sessions.
+4. WHILE the device is offline, THE App SHALL queue any progress updates and sync them to the server WHEN the device reconnects to the internet.
+5. THE App SHALL display the download status and storage size of each downloaded Surah or Juz in the download management screen.
+6. IF available storage on the device falls below 100 MB during a download, THEN THE App SHALL pause the download, notify the User of insufficient storage, and preserve any already-downloaded content.
+7. THE App SHALL allow the User to delete downloaded content to free device storage.
+
+---
+
+### Requirement 10: Learning Levels and Adaptive Learning Path
+
+**User Story:** As a user at any skill level, I want the App to adapt its content and difficulty to my current level and progress, so that I am always appropriately challenged and guided.
+
+#### Acceptance Criteria
+
+1. THE App SHALL support three learning levels: Beginner, Intermediate, and Advanced.
+2. WHEN the User is at the Beginner level, THE App SHALL prioritize lessons on Arabic alphabet recognition, basic Tajweed rules, and short Surahs from Juz Amma (Juz 30).
+3. WHEN the User is at the Intermediate level, THE App SHALL provide recitation practice for full Surahs, intermediate Tajweed rules, and introduce Hifz tools.
+4. WHEN the User is at the Advanced level, THE App SHALL provide full Hifz tools, advanced Tajweed rules, and access to Tafsir-integrated study modes.
+5. THE App SHALL allow the User to manually change their learning level at any time from the profile settings.
+6. WHEN the User consistently completes activities above their current level's benchmarks for 7 consecutive days, THE App SHALL suggest advancing to the next level.
+7. THE App SHALL provide a structured curriculum for each level consisting of ordered lessons, each with a defined objective, content, and completion criteria.
+
+---
+
+### Requirement 11: Notifications and Reminders
+
+**User Story:** As a user, I want to receive reminders for my daily practice and review sessions, so that I maintain a consistent learning habit.
+
+#### Acceptance Criteria
+
+1. THE App SHALL allow the User to configure daily reminder notifications with a custom time.
+2. WHEN the configured reminder time is reached and the User has not yet completed their daily activity, THE Notification Service SHALL send a push notification reminding the User to practice.
+3. WHEN the User has Ayahs due for SRS review, THE Notification Service SHALL send a daily notification indicating the number of Ayahs due for review.
+4. THE App SHALL allow the User to enable or disable each notification type independently.
+5. THE App SHALL allow the User to set quiet hours during which no notifications are sent.
+6. IF the User has not opened the App for 3 consecutive days, THEN THE Notification Service SHALL send a re-engagement notification.
+
+---
+
+### Requirement 12: Search and Navigation
+
+**User Story:** As a user, I want to quickly find any Surah, Ayah, or topic within the Quran, so that I can navigate the content efficiently.
+
+#### Acceptance Criteria
+
+1. THE App SHALL provide a search function that accepts Surah name (in Arabic or transliteration), Surah number, Juz number, or Ayah reference (e.g., "2:255") as input.
+2. WHEN the User submits a search query, THE App SHALL display matching results within 500 milliseconds.
+3. THE App SHALL provide a table of contents listing all 114 Surahs with their names in Arabic, transliteration, English translation of the name, number of Ayahs, and revelation type (Meccan or Medinan).
+4. THE App SHALL allow the User to search for keywords within translation text and display a list of matching Ayahs.
+5. THE App SHALL maintain a history of the User's last 20 visited Surahs or Ayahs for quick re-access.
+6. WHEN the User returns to the App after closing it, THE App SHALL restore the User's last reading position.
+
+---
+
+### Requirement 13: User Profile and Settings
+
+**User Story:** As a user, I want to manage my profile and customize the App's settings, so that the experience matches my preferences and needs.
+
+#### Acceptance Criteria
+
+1. THE App SHALL allow the User to create an account using email and password or a supported third-party authentication provider.
+2. THE App SHALL allow the User to update their display name, profile picture, and learning preferences at any time.
+3. THE App SHALL synchronize the User's progress, bookmarks, notes, and settings across devices when the User is signed in.
+4. THE App SHALL allow the User to export their memorization progress report as a PDF document.
+5. THE App SHALL provide a dark mode and a light mode display theme, selectable by the User.
+6. THE App SHALL allow the User to reset their progress for a specific Surah or their entire memorization plan, with a confirmation step before the reset is applied.
+7. IF the User requests account deletion, THEN THE App SHALL permanently delete all User data within 30 days and send a confirmation email to the User's registered address.

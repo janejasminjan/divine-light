@@ -1,0 +1,216 @@
+ I want you to keep that existing view exactly as it is and add a second view called Reading View.
+
+Main requirement
+For each Surah page, there should be two view modes:
+
+Verse by Verse View
+
+Keep the current implementation unchanged.
+
+Continue showing each ayah separately exactly as it currently works.
+
+Keep all current features in this mode, including translation, audio syncing, bookmarks, highlighting, Tajweed, or any existing controls if present.
+
+Reading View
+
+Add a new mode that displays the entire Surah as continuous Quran ayahs in a smooth reading layout.
+
+In this mode, show Arabic Quran text only.
+
+Do not show translation in Reading View.
+
+The ayahs should still remain logically separated enough to preserve readability, but the page should feel like a continuous reading experience rather than a card/list of individual ayahs.
+
+Keep ayah markers/numbers visible in an elegant inline way if the app already supports them or if they can be added without disturbing readability.
+
+The design should feel calm and uncluttered, similar to a dedicated Quran reading experience. Reading-focused Quran apps often emphasize clean, uninterrupted reading layouts without visual clutter.
+
+Important constraints
+Do not rebuild the Surah page from scratch.
+
+Do not break the current verse-by-verse mode.
+
+Do not change unrelated screens or navigation.
+
+Do not remove translation from verse-by-verse mode.
+
+Reading View should be an additional mode only.
+
+If the app already has reader settings, integrate this cleanly into the existing UI rather than creating a disconnected new settings system.
+
+What I want you to do first
+Inspect the current codebase.
+
+Find the Surah detail page / Quran reader page.
+
+Identify how the current verse-by-verse rendering works.
+
+Identify how translations are injected into the UI.
+
+Identify the cleanest place to add a view toggle between:
+
+Verse by Verse
+
+Reading View
+
+Before making major changes, summarize:
+
+which files control the Surah screen,
+
+where the ayah list is rendered,
+
+and where the toggle should be implemented.
+
+UI requirements
+Add a simple switch, segmented control, or tab selector at the top of the Surah screen:
+
+Verse by Verse
+
+Reading View
+
+Requirements for the toggle:
+
+Default to the current Verse by Verse mode so existing behavior stays familiar.
+
+Switching views should be quick and smooth.
+
+Preserve the same Surah context when switching.
+
+If the user is reading Surah Al-Baqarah in verse-by-verse mode and switches to Reading View, they should remain in the same Surah.
+
+If possible, preserve approximate scroll position when switching modes, but do not overcomplicate this if it risks stability.
+
+Reading View behavior
+In Reading View:
+
+Render the Surah as continuous Arabic text.
+
+No translation.
+
+No repeated translation blocks between ayahs.
+
+No card-heavy layout.
+
+Use a reading-friendly width, spacing, and line height.
+
+Keep RTL rendering correct.
+
+Keep Arabic shaping and harakat rendering correct.
+
+Keep ayah boundaries understandable.
+
+Prefer inline ayah separators or ayah numbers rather than separate boxed rows.
+
+If Tajweed coloring already exists or is being added, Reading View should support it as well, but the layout should still remain reading-first.
+
+Layout guidance
+The Reading View should:
+
+feel like reading a Mushaf-inspired continuous text stream,
+
+not feel like chat bubbles, cards, or feed items,
+
+avoid too much padding between ayahs,
+
+use elegant spacing between verses or inline markers,
+
+prioritize readability on mobile.
+
+Apps described as offering a relaxing Quran reading experience tend to emphasize uncluttered text presentation and clean reading modes, which is the right direction for this feature.
+
+Technical guidance
+Implement this with minimal and safe architecture changes.
+
+Suggested approach:
+
+Keep the existing verse-by-verse component.
+
+Add a separate ReadingView renderer for the same Surah data.
+
+Reuse the existing Arabic Quran text source.
+
+Suppress translation output in Reading View.
+
+Reuse existing ayah metadata where helpful.
+
+If the app uses component-based rendering, create a dedicated component for continuous reading layout.
+
+If the app uses a list renderer, do not force the same list/card structure into Reading View if that creates a broken reading experience.
+
+If the app has these existing features
+Handle them like this:
+
+Translation: show only in Verse by Verse mode, hide in Reading View.
+
+Audio controls: keep existing audio behavior unchanged unless it is visually tied to the verse cards.
+
+Bookmarks: do not break them.
+
+Tajweed colors: if already supported, allow them in Reading View too.
+
+Ayah actions: if per-ayah actions exist, either keep them subtle or expose them only when the user taps an ayah marker.
+
+Highlighting current ayah during audio: preserve if possible, but do it in a visually subtle way in Reading View.
+
+Data/rendering rules
+Do not duplicate Quran data unnecessarily.
+
+Use the same Surah / ayah source already present in the app.
+
+Do not hardcode text separately for Reading View.
+
+Keep canonical Arabic text unchanged.
+
+Preserve RTL layout and Arabic typography quality.
+
+Avoid wrapping every word in extra heavy markup unless necessary.
+
+Performance requirements
+Reading View should load efficiently even for long surahs.
+
+Avoid excessive DOM complexity.
+
+Reuse existing data-fetching logic.
+
+Memoize or optimize rendering where appropriate.
+
+Keep the implementation maintainable.
+
+Acceptance criteria
+The task is complete when:
+
+every Surah page has both Verse by Verse and Reading View,
+
+the current verse-by-verse mode still works as before,
+
+Reading View shows continuous Arabic Quran text only,
+
+translation is hidden in Reading View,
+
+the UI clearly lets the user switch between the two modes,
+
+the implementation does not break existing Quran features.
+
+Safety rules
+Do not refactor unrelated code.
+
+Do not redesign the whole Quran section.
+
+Do not rename or remove current features unless absolutely necessary.
+
+Make precise edits only.
+
+If a structural refactor seems necessary, explain why first before doing it.
+
+Final output
+When done:
+
+list all files changed,
+
+explain how the new view toggle works,
+
+explain how Reading View suppresses translation,
+
+explain how the continuous ayah rendering is implemented,
+
+and confirm that Verse by Verse mode remains unchanged.

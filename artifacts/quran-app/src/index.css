@@ -1,0 +1,603 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Scheherazade+New:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─────────────────────────────────────────────────────────────
+   Tailwind colour token bridge
+   Colours are full CSS values (hsl/oklch), not bare triplets.
+   ───────────────────────────────────────────────────────────── */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border:     var(--border);
+  --color-input:      var(--input);
+  --color-ring:       var(--ring);
+
+  --color-card:             var(--card);
+  --color-card-foreground:  var(--card-foreground);
+  --color-card-border:      var(--card-border);
+
+  --color-popover:            var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover-border:     var(--popover-border);
+
+  --color-primary:            var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-border:     var(--primary-border);
+
+  --color-secondary:            var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-border:     var(--secondary-border);
+
+  --color-muted:            var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted-border:     var(--muted-border);
+
+  --color-accent:            var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-border:     var(--accent-border);
+
+  --color-destructive:            var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-border:     var(--destructive-border);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar:                      var(--sidebar);
+  --color-sidebar-foreground:           var(--sidebar-foreground);
+  --color-sidebar-border:               var(--sidebar-border);
+  --color-sidebar-primary:              var(--sidebar-primary);
+  --color-sidebar-primary-foreground:   var(--sidebar-primary-foreground);
+  --color-sidebar-primary-border:       var(--sidebar-primary-border);
+  --color-sidebar-accent:               var(--sidebar-accent);
+  --color-sidebar-accent-foreground:    var(--sidebar-accent-foreground);
+  --color-sidebar-accent-border:        var(--sidebar-accent-border);
+  --color-sidebar-ring:                 var(--sidebar-ring);
+
+  --font-sans:           var(--app-font-sans);
+  --font-serif:          var(--app-font-serif);
+  --font-mono:           var(--app-font-mono);
+  --font-arabic:         'Amiri', serif;
+  --font-arabic-indopak: 'Scheherazade New', serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ── Light (default) ─────────────────────────────────────────── */
+:root {
+  --background: hsl(40 33% 97%);
+  --foreground: hsl(190 51% 12%);
+  --border:     hsl(40 20% 85%);
+  --input:      hsl(40 20% 85%);
+  --ring:       hsl(43 65% 53%);
+
+  --card:             hsl(148 28% 96%);
+  --card-foreground:  hsl(190 51% 12%);
+  --card-border:      hsl(43 68% 62%);
+
+  --popover:            hsl(40 33% 99%);
+  --popover-foreground: hsl(190 51% 12%);
+  --popover-border:     hsl(40 20% 90%);
+
+  --primary:            hsl(190 51% 18%);
+  --primary-foreground: hsl(40 33% 97%);
+
+  --secondary:            hsl(43 65% 53%);
+  --secondary-foreground: hsl(190 51% 12%);
+
+  --muted:            hsl(40 20% 92%);
+  --muted-foreground: hsl(190 20% 40%);
+
+  --accent:            hsl(43 65% 53%);
+  --accent-foreground: hsl(190 51% 12%);
+
+  --destructive:            hsl(0 84% 60%);
+  --destructive-foreground: hsl(210 40% 98%);
+
+  --chart-1: hsl(190 51% 18%);
+  --chart-2: hsl(43  65% 53%);
+  --chart-3: hsl(150 40% 40%);
+  --chart-4: hsl(20  60% 50%);
+  --chart-5: hsl(280 40% 50%);
+
+  --sidebar:                    hsl(40  33% 95%);
+  --sidebar-foreground:         hsl(190 51% 18%);
+  --sidebar-border:             hsl(40  20% 85%);
+  --sidebar-primary:            hsl(190 51% 18%);
+  --sidebar-primary-foreground: hsl(40  33% 97%);
+  --sidebar-accent:             hsl(40  20% 90%);
+  --sidebar-accent-foreground:  hsl(190 51% 12%);
+  --sidebar-ring:               hsl(43  65% 53%);
+
+  --app-font-sans: 'Outfit', sans-serif;
+  --app-font-serif: 'Amiri', serif;
+  --app-font-mono: monospace;
+  --radius: 0.75rem;
+  --opaque-button-border-intensity: -8;
+  --elevate-1: rgba(15, 41, 46, 0.03);
+  --elevate-2: rgba(15, 41, 46, 0.08);
+}
+
+/* ── Dark ────────────────────────────────────────────────────── */
+.dark {
+  --background: hsl(190 35% 16%);
+  --foreground: hsl(40  33% 90%);
+  --border:     hsl(190 25% 23%);
+  --input:      hsl(190 25% 23%);
+  --ring:       hsl(43  65% 53%);
+
+  --card:             hsl(190 35% 18%);
+  --card-foreground:  hsl(40  33% 90%);
+  --card-border:      hsl(190 25% 23%);
+
+  --popover:            hsl(190 35% 18%);
+  --popover-foreground: hsl(40  33% 90%);
+  --popover-border:     hsl(190 25% 23%);
+
+  --primary:            hsl(43 65% 53%);
+  --primary-foreground: hsl(190 35% 16%);
+
+  --secondary:            hsl(190 35% 22%);
+  --secondary-foreground: hsl(40  33% 90%);
+
+  --muted:            hsl(190 25% 21%);
+  --muted-foreground: hsl(40  20% 68%);
+
+  --accent:            hsl(43  65% 53%);
+  --accent-foreground: hsl(190 35% 16%);
+
+  --destructive:            hsl(0 62% 38%);
+  --destructive-foreground: hsl(40 33% 90%);
+
+  --chart-1: hsl(43  65% 53%);
+  --chart-2: hsl(190 50% 35%);
+  --chart-3: hsl(150 40% 42%);
+  --chart-4: hsl(20  60% 52%);
+  --chart-5: hsl(280 40% 52%);
+
+  --sidebar:                    hsl(190 35% 14%);
+  --sidebar-foreground:         hsl(40  33% 90%);
+  --sidebar-border:             hsl(190 25% 22%);
+  --sidebar-primary:            hsl(43  65% 53%);
+  --sidebar-primary-foreground: hsl(190 35% 14%);
+  --sidebar-accent:             hsl(190 25% 20%);
+  --sidebar-accent-foreground:  hsl(40  33% 90%);
+  --sidebar-ring:               hsl(43  65% 53%);
+
+  --opaque-button-border-intensity: 9;
+  --elevate-1: rgba(255, 255, 255, 0.05);
+  --elevate-2: rgba(255, 255, 255, 0.10);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   E-READER PROFILE CLASSES
+   Base values match DEFAULT_SETTINGS for each profile.
+   JS (useReadingProfile) overrides surface vars when controls change.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Kobo Clara ComfortLight PRO ─────────────────────────────── */
+/* Default: brightness 70 / warmth 35 → warm cream paper         */
+.kobo {
+  /* Surface */
+  --background:         oklch(86.49% 0.0268 80.5);
+  --foreground:         oklch(22.00% 0.0117 65.0);
+  --card:               oklch(87.69% 0.0228 80.5);
+  --card-foreground:    oklch(22.00% 0.0117 65.0);
+  --popover:            oklch(87.69% 0.0228 80.5);
+  --popover-foreground: oklch(22.00% 0.0117 65.0);
+  --muted:              oklch(81.49% 0.0161 80.5);
+  --muted-foreground:   oklch(46.00% 0.0082 65.0);
+  --border:             oklch(77.49% 0.0134 80.5);
+  --input:              oklch(77.49% 0.0134 80.5);
+  --sidebar:            oklch(84.29% 0.0241 80.5);
+  --sidebar-foreground: oklch(22.00% 0.0117 65.0);
+  --sidebar-border:     oklch(80.29% 0.0134 80.5);
+
+  /* Accent — warm sepia brown + amber */
+  --ring:               oklch(54% 0.060 72);
+  --primary:            oklch(24% 0.040 65);
+  --primary-foreground: oklch(90% 0.020 80);
+  --secondary:          oklch(54% 0.060 72);
+  --secondary-foreground: oklch(18% 0.010 65);
+  --accent:             oklch(54% 0.060 72);
+  --accent-foreground:  oklch(18% 0.010 65);
+  --destructive:        oklch(48% 0.180 28);
+  --destructive-foreground: oklch(90% 0.020 80);
+
+  --sidebar-primary:            oklch(24% 0.040 65);
+  --sidebar-primary-foreground: oklch(90% 0.020 80);
+  --sidebar-accent:             oklch(81.49% 0.0161 80.5);
+  --sidebar-accent-foreground:  oklch(22% 0.0117 65);
+  --sidebar-ring:               oklch(54% 0.060 72);
+
+  --chart-1: oklch(24% 0.040 65);
+  --chart-2: oklch(54% 0.060 72);
+  --chart-3: oklch(42% 0.040 150);
+  --chart-4: oklch(52% 0.060 40);
+  --chart-5: oklch(46% 0.040 300);
+
+  --opaque-button-border-intensity: -6;
+  --elevate-1: rgba(70, 35, 10, 0.04);
+  --elevate-2: rgba(70, 35, 10, 0.09);
+}
+
+/* ── Onyx BOOX dual front-light ──────────────────────────────── */
+/* Default: white 60 / amber 40 → soft warm paper                */
+.boox {
+  /* Surface */
+  --background:         oklch(91.30% 0.0220 82.0);
+  --foreground:         oklch(18.00% 0.0100 68.0);
+  --card:               oklch(92.50% 0.0187 82.0);
+  --card-foreground:    oklch(18.00% 0.0100 68.0);
+  --popover:            oklch(92.50% 0.0187 82.0);
+  --popover-foreground: oklch(18.00% 0.0100 68.0);
+  --muted:              oklch(86.30% 0.0132 82.0);
+  --muted-foreground:   oklch(42.00% 0.0070 68.0);
+  --border:             oklch(82.30% 0.0110 82.0);
+  --input:              oklch(82.30% 0.0110 82.0);
+  --sidebar:            oklch(89.10% 0.0198 82.0);
+  --sidebar-foreground: oklch(18.00% 0.0100 68.0);
+  --sidebar-border:     oklch(85.10% 0.0110 82.0);
+
+  /* Accent — near-black warm + amber */
+  --ring:               oklch(50% 0.055 70);
+  --primary:            oklch(20% 0.030 68);
+  --primary-foreground: oklch(92% 0.018 82);
+  --secondary:          oklch(50% 0.055 70);
+  --secondary-foreground: oklch(18% 0.010 68);
+  --accent:             oklch(50% 0.055 70);
+  --accent-foreground:  oklch(18% 0.010 68);
+  --destructive:        oklch(46% 0.180 28);
+  --destructive-foreground: oklch(92% 0.018 82);
+
+  --sidebar-primary:            oklch(20% 0.030 68);
+  --sidebar-primary-foreground: oklch(92% 0.018 82);
+  --sidebar-accent:             oklch(86.30% 0.0132 82);
+  --sidebar-accent-foreground:  oklch(18% 0.010 68);
+  --sidebar-ring:               oklch(50% 0.055 70);
+
+  --chart-1: oklch(20% 0.030 68);
+  --chart-2: oklch(50% 0.055 70);
+  --chart-3: oklch(42% 0.040 150);
+  --chart-4: oklch(50% 0.060 40);
+  --chart-5: oklch(44% 0.040 300);
+
+  --opaque-button-border-intensity: -5;
+  --elevate-1: rgba(60, 28, 5, 0.05);
+  --elevate-2: rgba(60, 28, 5, 0.10);
+}
+
+/* ── Kindle App — White theme (default) ──────────────────────── */
+/* JS overrides surface vars for Sepia / Black sub-themes.       */
+.kindle {
+  /* Surface — White theme base */
+  --background:         oklch(98.80% 0.0020 90.0);
+  --foreground:         oklch(8.500% 0.0030 260.);
+  --card:               oklch(98.80% 0.0017 90.0);
+  --card-foreground:    oklch(8.500% 0.0030 260.);
+  --popover:            oklch(98.80% 0.0017 90.0);
+  --popover-foreground: oklch(8.500% 0.0030 260.);
+  --muted:              oklch(93.80% 0.0012 90.0);
+  --muted-foreground:   oklch(32.50% 0.0021 260.);
+  --border:             oklch(89.80% 0.0010 90.0);
+  --input:              oklch(89.80% 0.0010 90.0);
+  --sidebar:            oklch(96.60% 0.0018 90.0);
+  --sidebar-foreground: oklch(8.500% 0.0030 260.);
+  --sidebar-border:     oklch(92.60% 0.0010 90.0);
+
+  /* Accent — Kindle navy + amber */
+  --ring:               oklch(22% 0.045 240);
+  --primary:            oklch(22% 0.045 240);
+  --primary-foreground: oklch(98% 0.002 90);
+  --secondary:          oklch(54% 0.060 75);
+  --secondary-foreground: oklch(10% 0.003 260);
+  --accent:             oklch(54% 0.060 75);
+  --accent-foreground:  oklch(10% 0.003 260);
+  --destructive:        oklch(50% 0.180 28);
+  --destructive-foreground: oklch(98% 0.002 90);
+
+  --sidebar-primary:            oklch(22% 0.045 240);
+  --sidebar-primary-foreground: oklch(98% 0.002 90);
+  --sidebar-accent:             oklch(93.80% 0.0012 90);
+  --sidebar-accent-foreground:  oklch(8.5% 0.003 260);
+  --sidebar-ring:               oklch(22% 0.045 240);
+
+  --chart-1: oklch(22% 0.045 240);
+  --chart-2: oklch(54% 0.060 75);
+  --chart-3: oklch(44% 0.040 150);
+  --chart-4: oklch(52% 0.060 40);
+  --chart-5: oklch(46% 0.040 300);
+
+  --opaque-button-border-intensity: -7;
+  --elevate-1: rgba(10, 10, 10, 0.03);
+  --elevate-2: rgba(10, 10, 10, 0.07);
+}
+
+/* ── Passive reflective paper ────────────────────────────────── */
+/* Default: contrast 65 → charcoal ink on matte off-white        */
+.paper {
+  /* Surface */
+  --background:         oklch(91.00% 0.0080 85.0);
+  --foreground:         oklch(24.30% 0.0086 69.4);
+  --card:               oklch(92.20% 0.0068 85.0);
+  --card-foreground:    oklch(24.30% 0.0086 69.4);
+  --popover:            oklch(92.20% 0.0068 85.0);
+  --popover-foreground: oklch(24.30% 0.0086 69.4);
+  --muted:              oklch(86.00% 0.0048 85.0);
+  --muted-foreground:   oklch(48.30% 0.0060 69.4);
+  --border:             oklch(82.00% 0.0040 85.0);
+  --input:              oklch(82.00% 0.0040 85.0);
+  --sidebar:            oklch(88.80% 0.0072 85.0);
+  --sidebar-foreground: oklch(24.30% 0.0086 69.4);
+  --sidebar-border:     oklch(84.80% 0.0040 85.0);
+
+  /* Accent — charcoal + muted amber */
+  --ring:               oklch(50% 0.038 72);
+  --primary:            oklch(26% 0.028 68);
+  --primary-foreground: oklch(92% 0.006 85);
+  --secondary:          oklch(50% 0.038 72);
+  --secondary-foreground: oklch(22% 0.010 68);
+  --accent:             oklch(50% 0.038 72);
+  --accent-foreground:  oklch(22% 0.010 68);
+  --destructive:        oklch(46% 0.160 28);
+  --destructive-foreground: oklch(92% 0.006 85);
+
+  --sidebar-primary:            oklch(26% 0.028 68);
+  --sidebar-primary-foreground: oklch(92% 0.006 85);
+  --sidebar-accent:             oklch(86% 0.0048 85);
+  --sidebar-accent-foreground:  oklch(24.3% 0.0086 69.4);
+  --sidebar-ring:               oklch(50% 0.038 72);
+
+  --chart-1: oklch(26% 0.028 68);
+  --chart-2: oklch(50% 0.038 72);
+  --chart-3: oklch(42% 0.035 150);
+  --chart-4: oklch(50% 0.050 40);
+  --chart-5: oklch(44% 0.035 300);
+
+  --opaque-button-border-intensity: -7;
+  --elevate-1: rgba(20, 18, 10, 0.03);
+  --elevate-2: rgba(20, 18, 10, 0.07);
+}
+
+/* ── Base styles ─────────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply font-sans antialiased bg-background text-foreground selection:bg-secondary/30 selection:text-foreground;
+  }
+  .font-arabic {
+    font-family: var(--font-arabic);
+  }
+  .font-arabic-indopak {
+    font-family: var(--font-arabic-indopak);
+  }
+}
+
+/* ── Tajweed rule colours — theme-aware ──────────────────────────
+   Applied to <span class="tj-*"> elements produced by sanitizeTajweed().
+   Theme is set via [data-tj-theme] on the ayah-list wrapper element.
+   Default (no attribute or "vivid") = classic mushaf palette.
+   ────────────────────────────────────────────────────────────── */
+
+/* ─── Hamzat al-Wasl ─────────────────────────────────────────── */
+.tj-ham_wasl { color: #aaaaaa; }
+[data-tj-theme="soft"] .tj-ham_wasl { color: #b8b8b8; }
+[data-tj-theme="hc"]   .tj-ham_wasl { color: #808080; font-weight: 600; }
+[data-tj-theme="cb"]   .tj-ham_wasl { color: #555555; text-decoration: underline dotted; text-underline-offset: 3px; }
+
+/* ─── Silent letters ──────────────────────────────────────────── */
+.tj-slnt, .tj-silent { color: #bbbbbb; }
+[data-tj-theme="soft"] .tj-slnt,
+[data-tj-theme="soft"] .tj-silent { color: #cccccc; }
+[data-tj-theme="hc"]   .tj-slnt,
+[data-tj-theme="hc"]   .tj-silent { color: #999999; }
+[data-tj-theme="cb"]   .tj-slnt,
+[data-tj-theme="cb"]   .tj-silent { color: #777777; text-decoration: line-through; }
+
+/* ─── Lam Shamsiyyah ──────────────────────────────────────────── */
+.tj-lam_shamsiyyah, .tj-laam_shamsiyyah, .tj-laam_shamsiyah { color: #aaaaaa; }
+[data-tj-theme="soft"] .tj-lam_shamsiyyah,
+[data-tj-theme="soft"] .tj-laam_shamsiyyah,
+[data-tj-theme="soft"] .tj-laam_shamsiyah { color: #b8b8b8; }
+[data-tj-theme="hc"]   .tj-lam_shamsiyyah,
+[data-tj-theme="hc"]   .tj-laam_shamsiyyah,
+[data-tj-theme="hc"]   .tj-laam_shamsiyah { color: #808080; font-weight: 600; }
+[data-tj-theme="cb"]   .tj-lam_shamsiyyah,
+[data-tj-theme="cb"]   .tj-laam_shamsiyyah,
+[data-tj-theme="cb"]   .tj-laam_shamsiyah { color: #555555; text-decoration: underline dashed; text-underline-offset: 3px; }
+
+/* ─── Natural Madd (2 counts) ─────────────────────────────────── */
+.tj-madda_normal { color: #537FFF; }
+[data-tj-theme="soft"] .tj-madda_normal { color: #7aa3d4; }
+[data-tj-theme="hc"]   .tj-madda_normal { color: #0044FF; font-weight: 600; }
+[data-tj-theme="cb"]   .tj-madda_normal { color: #0066CC; text-decoration: underline solid; text-underline-offset: 3px; }
+
+/* ─── Permissible Madd (2/4/6 counts) ────────────────────────── */
+.tj-madda_permissible { color: #4050FF; }
+[data-tj-theme="soft"] .tj-madda_permissible { color: #5d86c0; }
+[data-tj-theme="hc"]   .tj-madda_permissible { color: #002299; font-weight: 600; }
+[data-tj-theme="cb"]   .tj-madda_permissible { color: #0044AA; text-decoration: underline double; text-underline-offset: 3px; }
+
+/* ─── Necessary Madd (6 counts) ──────────────────────────────── */
+.tj-madda_necessary { color: #000EBC; }
+[data-tj-theme="soft"] .tj-madda_necessary { color: #4a6fa5; }
+[data-tj-theme="hc"]   .tj-madda_necessary { color: #0000AA; font-weight: 700; }
+[data-tj-theme="cb"]   .tj-madda_necessary { color: #002288; text-decoration: underline wavy; text-underline-offset: 4px; }
+
+/* ─── Obligatory Madd (4–5 counts, connected & separated) ─────── */
+.tj-madda_obligatory,
+.tj-madda_obligatory_monfasel,
+.tj-madda_obligatory_mottasel { color: #3F7F3F; }
+[data-tj-theme="soft"] .tj-madda_obligatory,
+[data-tj-theme="soft"] .tj-madda_obligatory_monfasel,
+[data-tj-theme="soft"] .tj-madda_obligatory_mottasel { color: #5a8a5a; }
+[data-tj-theme="hc"]   .tj-madda_obligatory,
+[data-tj-theme="hc"]   .tj-madda_obligatory_monfasel,
+[data-tj-theme="hc"]   .tj-madda_obligatory_mottasel { color: #005500; font-weight: 700; }
+[data-tj-theme="cb"]   .tj-madda_obligatory,
+[data-tj-theme="cb"]   .tj-madda_obligatory_monfasel,
+[data-tj-theme="cb"]   .tj-madda_obligatory_mottasel { color: #005522; text-decoration: overline solid; }
+
+/* ─── Qalqalah (echo) ─────────────────────────────────────────── */
+.tj-qalaqah, .tj-qalaqala, .tj-qlql { color: #DD0008; }
+[data-tj-theme="soft"] .tj-qalaqah,
+[data-tj-theme="soft"] .tj-qalaqala,
+[data-tj-theme="soft"] .tj-qlql { color: #c06060; }
+[data-tj-theme="hc"]   .tj-qalaqah,
+[data-tj-theme="hc"]   .tj-qalaqala,
+[data-tj-theme="hc"]   .tj-qlql { color: #CC0000; font-weight: 700; }
+[data-tj-theme="cb"]   .tj-qalaqah,
+[data-tj-theme="cb"]   .tj-qalaqala,
+[data-tj-theme="cb"]   .tj-qlql {
+  color: #AA2200;
+  outline: 1.5px solid currentColor;
+  border-radius: 2px;
+  padding-inline: 1px;
+}
+
+/* ─── Ghunnah (nasalization) ──────────────────────────────────── */
+.tj-ghunnah, .tj-ghn, .tj-ghnn_mshd { color: #169200; }
+[data-tj-theme="soft"] .tj-ghunnah,
+[data-tj-theme="soft"] .tj-ghn,
+[data-tj-theme="soft"] .tj-ghnn_mshd { color: #4d9960; }
+[data-tj-theme="hc"]   .tj-ghunnah,
+[data-tj-theme="hc"]   .tj-ghn,
+[data-tj-theme="hc"]   .tj-ghnn_mshd { color: #007700; font-weight: 700; }
+[data-tj-theme="cb"]   .tj-ghunnah,
+[data-tj-theme="cb"]   .tj-ghn,
+[data-tj-theme="cb"]   .tj-ghnn_mshd { color: #006600; text-decoration: underline solid; text-underline-offset: 3px; }
+
+/* ─── Ikhfa (concealment) — also ikhfa_shafawi ────────────────── */
+.tj-ikhfa, .tj-ikhf, .tj-ikhfa_shafawi, .tj-ikhf_shfw, .tj-ikhf_meem, .tj-ikhafa { color: #D500B7; }
+[data-tj-theme="soft"] .tj-ikhfa,
+[data-tj-theme="soft"] .tj-ikhf,
+[data-tj-theme="soft"] .tj-ikhfa_shafawi,
+[data-tj-theme="soft"] .tj-ikhf_shfw,
+[data-tj-theme="soft"] .tj-ikhf_meem,
+[data-tj-theme="soft"] .tj-ikhafa { color: #a060a0; }
+[data-tj-theme="hc"]   .tj-ikhfa,
+[data-tj-theme="hc"]   .tj-ikhf,
+[data-tj-theme="hc"]   .tj-ikhfa_shafawi,
+[data-tj-theme="hc"]   .tj-ikhf_shfw,
+[data-tj-theme="hc"]   .tj-ikhf_meem,
+[data-tj-theme="hc"]   .tj-ikhafa { color: #AA0099; font-weight: 700; }
+[data-tj-theme="cb"]   .tj-ikhfa,
+[data-tj-theme="cb"]   .tj-ikhf,
+[data-tj-theme="cb"]   .tj-ikhfa_shafawi,
+[data-tj-theme="cb"]   .tj-ikhf_shfw,
+[data-tj-theme="cb"]   .tj-ikhf_meem,
+[data-tj-theme="cb"]   .tj-ikhafa { color: #660066; text-decoration: underline dashed; text-underline-offset: 3px; }
+
+/* ─── Idgham with Ghunnah ─────────────────────────────────────── */
+.tj-idgham_w_ghunnah, .tj-idghm_w_ghunna,
+.tj-idgham_with_ghunnah, .tj-idgham_ghunnah { color: #58B800; }
+[data-tj-theme="soft"] .tj-idgham_w_ghunnah,
+[data-tj-theme="soft"] .tj-idghm_w_ghunna,
+[data-tj-theme="soft"] .tj-idgham_with_ghunnah,
+[data-tj-theme="soft"] .tj-idgham_ghunnah { color: #78a850; }
+[data-tj-theme="hc"]   .tj-idgham_w_ghunnah,
+[data-tj-theme="hc"]   .tj-idghm_w_ghunna,
+[data-tj-theme="hc"]   .tj-idgham_with_ghunnah,
+[data-tj-theme="hc"]   .tj-idgham_ghunnah { color: #338800; font-weight: 700; }
+[data-tj-theme="cb"]   .tj-idgham_w_ghunnah,
+[data-tj-theme="cb"]   .tj-idghm_w_ghunna,
+[data-tj-theme="cb"]   .tj-idgham_with_ghunnah,
+[data-tj-theme="cb"]   .tj-idgham_ghunnah { color: #336600; text-decoration: underline dotted; text-underline-offset: 3px; }
+
+/* ─── Idgham without Ghunnah ──────────────────────────────────── */
+.tj-idgham_wo_ghunnah, .tj-idghm_wO_ghunna,
+.tj-idgham_without_ghunnah { color: #169200; }
+[data-tj-theme="soft"] .tj-idgham_wo_ghunnah,
+[data-tj-theme="soft"] .tj-idghm_wO_ghunna,
+[data-tj-theme="soft"] .tj-idgham_without_ghunnah { color: #4d9960; }
+[data-tj-theme="hc"]   .tj-idgham_wo_ghunnah,
+[data-tj-theme="hc"]   .tj-idghm_wO_ghunna,
+[data-tj-theme="hc"]   .tj-idgham_without_ghunnah { color: #007700; font-weight: 700; }
+[data-tj-theme="cb"]   .tj-idgham_wo_ghunnah,
+[data-tj-theme="cb"]   .tj-idghm_wO_ghunna,
+[data-tj-theme="cb"]   .tj-idgham_without_ghunnah { color: #004400; text-decoration: overline dotted; }
+
+/* ─── Idgham Shafawi ──────────────────────────────────────────── */
+.tj-idgham_shafawi, .tj-idghm_shfwy { color: #58B800; }
+[data-tj-theme="soft"] .tj-idgham_shafawi,
+[data-tj-theme="soft"] .tj-idghm_shfwy { color: #78a850; }
+[data-tj-theme="hc"]   .tj-idgham_shafawi,
+[data-tj-theme="hc"]   .tj-idghm_shfwy { color: #338800; font-weight: 700; }
+[data-tj-theme="cb"]   .tj-idgham_shafawi,
+[data-tj-theme="cb"]   .tj-idghm_shfwy { color: #336600; text-decoration: underline solid; text-underline-offset: 3px; }
+
+/* ─── Idgham Meem-Meem ────────────────────────────────────────── */
+.tj-idghm_meem_meem { color: #008000; }
+[data-tj-theme="soft"] .tj-idghm_meem_meem { color: #4a7a4a; }
+[data-tj-theme="hc"]   .tj-idghm_meem_meem { color: #005500; font-weight: 700; }
+[data-tj-theme="cb"]   .tj-idghm_meem_meem { color: #004400; text-decoration: overline solid; }
+
+/* ─── Iqlab ───────────────────────────────────────────────────── */
+.tj-iqlab, .tj-iqlb { color: #26BFFD; }
+[data-tj-theme="soft"] .tj-iqlab,
+[data-tj-theme="soft"] .tj-iqlb { color: #5aaad0; }
+[data-tj-theme="hc"]   .tj-iqlab,
+[data-tj-theme="hc"]   .tj-iqlb { color: #0088CC; font-weight: 700; }
+[data-tj-theme="cb"]   .tj-iqlab,
+[data-tj-theme="cb"]   .tj-iqlb { color: #004488; text-decoration: underline wavy; text-underline-offset: 4px; }
+
+/* ─── Custom Alef Maksora — no colour change ─────────────────── */
+.tj-custom-alef-maksora { color: inherit; }
+
+/* ─── Learning mode: dim all tj-* spans except the focused rule ──
+   Usage: add data-tj-focus="RULE_ID" on the ayah-list wrapper.
+   All non-focus spans drop to near-transparent; the focused rule
+   stays at full colour and opacity.
+   ────────────────────────────────────────────────────────────── */
+[data-tj-focus] [class^="tj-"],
+[data-tj-focus] [class*=" tj-"] { opacity: 0.08 !important; }
+
+/* Un-dim per rule */
+[data-tj-focus="ham_wasl"]         .tj-ham_wasl              { opacity: 1 !important; }
+[data-tj-focus="silent"]           .tj-slnt,
+[data-tj-focus="silent"]           .tj-silent                { opacity: 1 !important; }
+[data-tj-focus="lam_shamsiyyah"]   .tj-lam_shamsiyyah,
+[data-tj-focus="lam_shamsiyyah"]   .tj-laam_shamsiyyah,
+[data-tj-focus="lam_shamsiyyah"]   .tj-laam_shamsiyah        { opacity: 1 !important; }
+[data-tj-focus="madda_normal"]      .tj-madda_normal          { opacity: 1 !important; }
+[data-tj-focus="madda_permissible"] .tj-madda_permissible     { opacity: 1 !important; }
+[data-tj-focus="madda_necessary"]   .tj-madda_necessary       { opacity: 1 !important; }
+[data-tj-focus="madda_obligatory"]  .tj-madda_obligatory,
+[data-tj-focus="madda_obligatory"]  .tj-madda_obligatory_monfasel,
+[data-tj-focus="madda_obligatory"]  .tj-madda_obligatory_mottasel { opacity: 1 !important; }
+[data-tj-focus="qalqalah"]         .tj-qalaqah,
+[data-tj-focus="qalqalah"]         .tj-qalaqala,
+[data-tj-focus="qalqalah"]         .tj-qlql                  { opacity: 1 !important; }
+[data-tj-focus="ghunnah"]          .tj-ghunnah,
+[data-tj-focus="ghunnah"]          .tj-ghn,
+[data-tj-focus="ghunnah"]          .tj-ghnn_mshd             { opacity: 1 !important; }
+[data-tj-focus="ikhfa"]            .tj-ikhfa,
+[data-tj-focus="ikhfa"]            .tj-ikhf,
+[data-tj-focus="ikhfa"]            .tj-ikhfa_shafawi,
+[data-tj-focus="ikhfa"]            .tj-ikhf_shfw,
+[data-tj-focus="ikhfa"]            .tj-ikhf_meem,
+[data-tj-focus="ikhfa"]            .tj-ikhafa                { opacity: 1 !important; }
+[data-tj-focus="idgham_ghunnah"]   .tj-idgham_w_ghunnah,
+[data-tj-focus="idgham_ghunnah"]   .tj-idghm_w_ghunna,
+[data-tj-focus="idgham_ghunnah"]   .tj-idgham_with_ghunnah,
+[data-tj-focus="idgham_ghunnah"]   .tj-idgham_ghunnah        { opacity: 1 !important; }
+[data-tj-focus="idgham_no_ghunnah"] .tj-idgham_wo_ghunnah,
+[data-tj-focus="idgham_no_ghunnah"] .tj-idghm_wO_ghunna,
+[data-tj-focus="idgham_no_ghunnah"] .tj-idgham_without_ghunnah { opacity: 1 !important; }
+[data-tj-focus="idgham_shafawi"]   .tj-idgham_shafawi,
+[data-tj-focus="idgham_shafawi"]   .tj-idghm_shfwy           { opacity: 1 !important; }
+[data-tj-focus="idgham_meem_meem"] .tj-idghm_meem_meem       { opacity: 1 !important; }
+[data-tj-focus="iqlab"]            .tj-iqlab,
+[data-tj-focus="iqlab"]            .tj-iqlb                  { opacity: 1 !important; }

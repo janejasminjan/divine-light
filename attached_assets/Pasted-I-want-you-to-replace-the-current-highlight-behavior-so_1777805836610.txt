@@ -1,0 +1,369 @@
+I want you to replace the current highlight behavior so that during recitation the app does not highlight the whole verse and does not highlight the whole word with a box.
+
+Instead, I want this behavior:
+
+Main requirement
+When a reciter is reciting an ayah:
+
+highlight the characters of the exact word currently being recited by changing their text color,
+
+do not draw a background box around the word,
+
+do not highlight the whole ayah,
+
+do not highlight neighboring words early,
+
+do not repeat the first word of the ayah,
+
+do not lag behind the audio,
+
+and make sure the highlight is strictly synchronized with the audio.
+
+This should feel like true word-in-a-line recitation tracking, not block highlighting. Word-by-word Quran audio features are a recognized reading/listening pattern, and audio-text sync systems generally rely on word-level timing data rather than broad paragraph or line-level highlighting.
+
+First step: inspect the existing app
+Before implementing anything:
+
+Inspect the current codebase.
+
+Identify how Quran audio is loaded and played.
+
+Identify how ayah highlighting is currently done.
+
+Identify whether word-level timing data already exists in the app.
+
+Identify how Arabic text is rendered and segmented.
+
+Identify the cleanest way to switch from verse/box highlighting to character-level color highlighting.
+
+Do not rebuild the app from scratch.
+Do not redesign unrelated Quran screens.
+Do not break audio controls, Tajweed rendering, translation, bookmarks, or reading mode.
+Make precise, minimal, production-quality changes only. Replit works best for existing apps when the prompt asks for focused changes with clear boundaries.
+
+Target behavior
+Implement a new audio-sync text renderer with these rules:
+
+1. Character-level visual highlight
+The currently recited word should be highlighted by changing the text color of its letters/characters only.
+
+No boxed background.
+
+No pill chip.
+
+No large underline unless used as a subtle optional enhancement.
+
+The highlight color should integrate with the current app theme and remain readable in light and dark mode.
+
+2. Strict sync with audio
+Highlight should advance according to word-level timing, not guessed intervals.
+
+The active word should update in sync with the currently playing recitation time.
+
+Seeking, pausing, resuming, changing playback speed, or switching reciters must keep the sync correct.
+
+On seek, recompute the current active word immediately.
+
+On pause, freeze highlight exactly where playback stops.
+
+On resume, continue from the correct word without drifting.
+
+Precise word sync requires time-coded word boundaries or equivalent alignment data, and text-sync systems generally recommend explicit start/end timing per word for reliable highlighting.
+
+3. No repeated first word of ayah
+There is a bug or risk where the first word of the ayah may repeat or highlight twice.
+
+I want you to:
+
+inspect current segmentation/indexing logic,
+
+find and eliminate the cause of first-word duplication,
+
+make sure the first word appears once and is highlighted once,
+
+ensure the renderer and timing map both use the same indexing model.
+
+4. No lagging
+I want this to feel immediate and tight.
+
+Please reduce or eliminate lag by:
+
+avoiding slow polling if a more accurate timing method is possible,
+
+using efficient playback time tracking,
+
+preloading or caching timing data,
+
+minimizing rerenders,
+
+and updating only the affected word spans instead of rerendering the whole ayah tree if possible.
+
+5. No whole-word box
+Current behavior may use box or background highlight styles.
+
+Remove that for the recitation-follow feature and replace it with:
+
+text color change only,
+
+optionally subtle font-weight change if it improves clarity,
+
+but no intrusive block UI.
+
+Audio timing data requirement
+Please determine whether the app already has word-level timestamps.
+
+If word-level timestamps already exist:
+
+use them.
+
+If the app only has ayah-level timing:
+
+do not fake precise word sync by evenly splitting ayah duration across words unless there is absolutely no alternative,
+
+instead create the correct architecture for word-level timing support,
+
+and clearly document what timing source is required.
+
+If a reliable word-level timing dataset/API is available in the current app stack, integrate it cleanly. Word-by-word sync depends on real alignment data to stay accurate and avoid visible drift.
+
+Rendering requirements
+The Quran text renderer must support:
+
+Arabic RTL rendering,
+
+correct shaping and harakat display,
+
+clean word segmentation,
+
+optional coexistence with Tajweed color logic,
+
+and audio-active highlighting on top of normal text rendering.
+
+Implementation guidance:
+
+segment the ayah into words using the app’s canonical Quran text data,
+
+render each word in a span with a stable ID or index,
+
+when active, apply an active-recitation class that changes only the text color,
+
+if needed, further segment characters only visually, but do not break Arabic shaping unnecessarily,
+
+preserve Mushaf readability.
+
+Important:
+
+do not over-fragment Arabic text into many DOM nodes if that breaks ligatures or diacritics,
+
+prefer the minimum segmentation needed to apply color correctly.
+
+Tajweed compatibility
+If Tajweed coloring already exists or is being added:
+
+do not break it,
+
+define a clear priority model for styles.
+
+Suggested behavior:
+
+base text style,
+
+Tajweed color layer,
+
+active recitation override layer.
+
+When a word is actively being recited:
+
+the active recitation color should override the base word color in a controlled way,
+
+but the architecture should remain extensible in case you later want “active recitation + Tajweed tint” behavior.
+
+State management requirements
+Implement a proper sync state model, such as:
+
+currentAyahId
+
+currentWordIndex
+
+currentPlaybackTime
+
+timingDataLoaded
+
+isPlaying
+
+playbackRate
+
+The active highlighted word must derive from playback state and timing data, not from brittle DOM logic.
+
+Suggested data structures
+ts
+type WordTiming = {
+  surahId: number;
+  ayahId: number;
+  wordIndex: number;
+  startMs: number;
+  endMs: number;
+};
+
+type ActiveRecitationState = {
+  surahId: number | null;
+  ayahId: number | null;
+  wordIndex: number | null;
+  currentTimeMs: number;
+  isPlaying: boolean;
+  playbackRate: number;
+};
+
+type QuranWordSegment = {
+  surahId: number;
+  ayahId: number;
+  wordIndex: number;
+  text: string;
+};
+Performance requirements
+The implementation must be smooth and low-latency:
+
+cache word timing data per ayah or per surah,
+
+avoid full rerender of the whole screen on every audio tick,
+
+memoize ayah/word segments,
+
+only update the active word state when the active word actually changes,
+
+avoid duplicating the first word during normalization/parsing,
+
+support long surahs without UI jank.
+
+UI requirements
+Keep the UI consistent with the existing app:
+
+same fonts,
+
+same spacing,
+
+same theme behavior,
+
+same Surah page structure,
+
+same reader style.
+
+Only change the highlighting behavior and any supporting internal renderer logic needed for precise sync.
+
+For the visual style of active recitation:
+
+use a clean text color change,
+
+no word box,
+
+no large chip,
+
+no disruptive animation,
+
+readable in light and dark themes.
+
+Edge cases to handle
+Please handle these properly:
+
+play from start of ayah,
+
+play from middle of ayah,
+
+seek backward,
+
+seek forward,
+
+pause/resume,
+
+change reciter,
+
+change playback speed,
+
+audio buffering,
+
+no timing data loaded yet,
+
+last word of ayah,
+
+transition from one ayah to the next,
+
+first word of ayah should not double-render or double-highlight.
+
+Debugging and validation
+Add a temporary developer-friendly validation layer if useful:
+
+log active ayah + word index changes,
+
+compare audio current time against timing data boundaries,
+
+add a debug mode that can show the current word index and timing window,
+
+then keep this behind a dev flag or remove it after verification.
+
+Testing requirements
+Please verify all of the following:
+
+active highlight follows the currently recited word accurately,
+
+there is no full-ayah highlight anymore during recitation,
+
+there is no word box highlight anymore,
+
+first word of ayah is not repeated,
+
+highlight does not visibly lag,
+
+seeking preserves sync,
+
+pause/resume preserves sync,
+
+playback speed changes preserve sync,
+
+ayah transitions preserve sync,
+
+Arabic rendering still looks correct.
+
+Implementation order
+Please work in this order:
+
+Inspect the current Quran audio and highlighting architecture.
+
+Identify existing timing data availability.
+
+Replace current ayah/boxed highlight logic with word-level active state.
+
+Build character/text-color active highlight rendering.
+
+Fix first-word duplication bug.
+
+Optimize for low-latency updates.
+
+Test all playback interactions and edge cases.
+
+Document changed files and the timing model used.
+
+Safety rules
+Do not refactor unrelated screens.
+
+Do not redesign the Quran section.
+
+Do not break Tajweed, translation, reading view, or bookmarks.
+
+Do not introduce fake word sync if real timing support is missing; instead build the correct structure and document the missing timing dependency.
+
+If a major architecture change is required, explain it before doing it.
+
+Final output required
+When done, show me:
+
+which files were changed,
+
+how the word timing is sourced,
+
+how active word sync is computed,
+
+how you removed full-ayah and box highlighting,
+
+how you fixed the repeated first-word issue,
+
+and what was done to reduce lag.

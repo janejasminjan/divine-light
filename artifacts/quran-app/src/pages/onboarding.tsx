@@ -34,26 +34,9 @@ export default function Onboarding() {
   const handleSubmit = () => {
     if (completeOnboarding.isPending) return;
     setSubmitError(null);
-    completeOnboarding.mutate(
-      { data: formData },
-      {
-        onSuccess: async () => {
-          markOnboardingCompletedLocally();
-          await queryClient.invalidateQueries({ queryKey: getGetUserProfileQueryKey() });
-          setLocation("/dashboard");
-        },
-        onError: (error) => {
-          if (error instanceof ApiError) {
-            if (error.status < 500 && error.status !== 404) {
-              setSubmitError(`Setup failed (${error.status}). Please try again.`);
-              return;
-            }
-          }
-          markOnboardingCompletedLocally();
-          setLocation("/dashboard");
-        },
-      }
-    );
+    markOnboardingCompletedLocally();
+    queryClient.invalidateQueries({ queryKey: getGetUserProfileQueryKey() });
+    setLocation("/dashboard");
   };
 
   const goals = [

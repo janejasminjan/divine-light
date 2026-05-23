@@ -28,7 +28,7 @@ function yesterdayStr() {
 router.post("/activity", async (req, res) => {
   try {
     const bodySchema = z.object({
-      minutes: z.number().int().min(1),
+      minutes: z.number().int().min(1).max(480),
       activityType: z.enum(["reading", "memorization", "review", "listening"]),
     });
 

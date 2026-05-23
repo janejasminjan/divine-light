@@ -34,15 +34,15 @@ router.get("/users/profile", async (req, res) => {
 router.put("/users/profile", async (req, res) => {
   try {
     const updateSchema = z.object({
-      displayName: z.string().optional(),
+      displayName: z.string().trim().max(100).optional(),
       goal: z.enum(["recite", "memorize", "understand", "all"]).optional(),
       level: z.enum(["beginner", "intermediate", "advanced"]).optional(),
       dailyDurationMinutes: z.number().int().optional(),
       dailyAyahTarget: z.number().int().min(1).max(20).optional(),
       tajweedHighlightingEnabled: z.boolean().optional(),
       transliterationEnabled: z.boolean().optional(),
-      primaryTranslationLanguage: z.string().optional(),
-      preferredReciter: z.string().optional(),
+      primaryTranslationLanguage: z.string().trim().max(20).optional(),
+      preferredReciter: z.string().trim().max(60).optional(),
       fontSizePreference: z
         .enum(["small", "medium", "large", "extra_large"])
         .optional(),
@@ -80,7 +80,7 @@ router.put("/users/profile", async (req, res) => {
 router.post("/users/onboarding", async (req, res) => {
   try {
     const bodySchema = z.object({
-      displayName: z.string().optional(),
+      displayName: z.string().trim().max(100).optional(),
       goal: z.enum(["recite", "memorize", "understand", "all"]),
       level: z.enum(["beginner", "intermediate", "advanced"]),
       dailyDurationMinutes: z.number().int(),

@@ -976,7 +976,7 @@ interface ReadingViewPanelProps {
   tajweedData: Record<number, TajweedWord[]>;
   tajweedTapExplain: boolean;
   activeAyah: number | null;
-  activeWordIndex: number;
+  activeWordIndex: number | null;
   surahTimingData: SurahTimingData;
   selectedAyah: number | null;
   setSelectedAyah: (n: number | null) => void;
@@ -1323,13 +1323,8 @@ export default function QuranReading() {
   const surahTimingDataRef = useRef<SurahTimingData>(null);
   const activeWordIdxRef   = useRef<number | null>(null);
   const rafRef             = useRef<number>(0);
-
-  // Persistent audio element reused across ayahs for the QuranCDN surah-file
-  // path. Keeping the same element means the browser retains its network buffer
-  // between ayahs, so seeks are instant instead of triggering a stall-and-resume
-  // that sounds like the first word is played twice.
-  const surahAudioRef    = useRef<HTMLAudioElement | null>(null);
-  const surahAudioUrlRef = useRef<string>("");
+  const preloadedAudioRef = useRef<HTMLAudioElement | null>(null);
+  const preloadedAyahRef  = useRef<number | null>(null);
 
   // Surah completion — shown only after last ayah finishes or user scrolls to the end
   const [surahCompleted, setSurahCompleted] = useState(false);
@@ -1538,16 +1533,6 @@ export default function QuranReading() {
 
   /* ── Fetch word-level timing data for current surah ─────── */
   useEffect(() => {
-    // Discard the persistent surah audio element whenever the surah or reciter
-    // changes — we need a fresh element for the new file/reciter.
-    if (surahAudioRef.current) {
-      surahAudioRef.current.pause();
-      surahAudioRef.current.removeAttribute("src");
-      surahAudioRef.current.load();
-      surahAudioRef.current = null;
-      surahAudioUrlRef.current = "";
-    }
-
     const timingId = TIMING_RECITER_MAP[localReciter];
     if (!timingId || scriptInfo.id !== "uthmani") {
       setSurahTimingData(null);

@@ -1339,6 +1339,10 @@ export default function QuranReading() {
   const { data: plan } = useGetMemorizationPlan({ surahId: surahNum }, {
     query: { queryKey: getGetMemorizationPlanQueryKey({ surahId: surahNum }) },
   });
+  const planList = useMemo(
+    () => (Array.isArray(plan) ? plan : []),
+    [plan],
+  );
   const { data: bookmarks } = useGetBookmarks({ query: { queryKey: getGetBookmarksQueryKey() } });
   const bookmarkList = useMemo(
     () => (Array.isArray(bookmarks) ? bookmarks : []),
@@ -1865,7 +1869,7 @@ export default function QuranReading() {
   // Auto-bookmark is excluded from the "Saved" indicator — only manual bookmarks count
   const isBookmarked = (n: number) =>
     bookmarkList.some(b => b.surahId === surahNum && b.ayahNumber === n && b.note !== AUTO_BOOKMARK_NOTE);
-  const isInPlan = (n: number) => plan?.some(e => e.ayahNumber === n);
+  const isInPlan = (n: number) => planList.some(e => e.ayahNumber === n);
   const getTranslation = (n: number) => translationAyahs.find(t => t.numberInSurah === n)?.text ?? "";
 
   /* ── Loading ─────────────────────────────────────────────── */

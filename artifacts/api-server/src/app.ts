@@ -9,6 +9,18 @@ import { logger } from "./lib/logger";
 
 const app: Express = express();
 
+const allowedOrigins = (process.env.ALLOWED_ORIGINS ?? "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const corsOrigin: Parameters<typeof cors>[0]["origin"] =
+  allowedOrigins.length > 0
+    ? allowedOrigins
+    : process.env.NODE_ENV === "development"
+      ? true
+      : false;
+
 app.use(
   pinoHttp({
     logger,
@@ -28,8 +40,7 @@ app.use(
     },
   }),
 );
-// credentials:true + origin:true is required for cookie-based auth through the Replit proxy
-app.use(cors({ credentials: true, origin: true }));
+app.use(cors({ credentials: true, origin: corsOrigin }));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

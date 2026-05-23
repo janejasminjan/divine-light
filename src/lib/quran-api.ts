@@ -129,5 +129,4 @@ export const searchAyahsQueryOptions = (query: string, language: SupportedLangua
     queryKey: ["quran", "search", query, language],
     queryFn: () => searchAyahs(query, language),
     staleTime: 1000 * 60 * 5,
-    enabled: Boolean(query.trim()),
   });

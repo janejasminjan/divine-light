@@ -197,12 +197,7 @@ export default function Onboarding() {
             {step < 3 ? (
               <Button onClick={handleNext}>Next</Button>
             ) : (
-              <Button 
-                onClick={handleSubmit} 
-                disabled={completeOnboarding.isPending}
-              >
-                {completeOnboarding.isPending ? "Setting up..." : "Complete Setup"}
-              </Button>
+              <Button onClick={handleSubmit}>Complete Setup</Button>
             )}
           </div>
         </div>

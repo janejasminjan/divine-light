@@ -84,7 +84,7 @@ interface SetupProps {
 }
 
 function SetupScreen({ onStart }: SetupProps) {
-  const [surahs, setSurahs] = useState<{ number: number; englishName: string; name: string; numberOfAyahs: number }[]>([]);
+  const [surahs, setSurahs] = useState<{ number: number; englishName: string; name: string; numberOfAyahs: number; revelationType?: string }[]>([]);
   const [loadingSurahs, setLoadingSurahs] = useState(true);
   const [selectedSurah, setSelectedSurah] = useState<number>(1);
   const [startAyah, setStartAyah] = useState(1);

@@ -9,8 +9,5 @@
     "jsx": "react-jsx",
     "lib": ["esnext", "dom", "dom.iterable"]
   },
-  "include": ["src"],
-  "references": [
-    { "path": "../api-client-react" }
-  ]
+  "include": ["src"]
 }

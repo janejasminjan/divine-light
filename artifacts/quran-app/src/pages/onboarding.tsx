@@ -2,12 +2,11 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCompleteOnboarding, OnboardingBodyGoal, OnboardingBodyLevel, getGetUserProfileQueryKey } from "@workspace/api-client-react";
+import { ApiError, useCompleteOnboarding, OnboardingBodyGoal, OnboardingBodyLevel, getGetUserProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Book, Brain, Target, Globe } from "lucide-react";
-import { ApiError } from "@workspace/api-client-react/src/custom-fetch";
 
 export default function Onboarding() {
   const [, setLocation] = useLocation();

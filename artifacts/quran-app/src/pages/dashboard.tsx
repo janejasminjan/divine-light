@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useGetProgress, getGetProgressQueryKey, useGetDueReviews, useGetBookmarks, getGetBookmarksQueryKey } from "@workspace/api-client-react";
 import { Link } from "wouter";
@@ -488,6 +488,7 @@ export default function Dashboard() {
   const { data: progress, isLoading: isLoadingProgress } = useGetProgress({ query: { queryKey: getGetProgressQueryKey() }});
   const { data: dueReviews, isLoading: isLoadingReviews } = useGetDueReviews();
   const { data: bookmarks } = useGetBookmarks({ query: { queryKey: getGetBookmarksQueryKey() } });
+  const bookmarkList = useMemo(() => (Array.isArray(bookmarks) ? bookmarks : []), [bookmarks]);
   const { dueToday, config } = useReminders();
   const [dailyPos, setDailyPos] = useState<DailyPosition | null>(null);
   useEffect(() => { setDailyPos(getDailyPosition()); }, []);
@@ -725,8 +726,8 @@ export default function Dashboard() {
       </div>
 
       {/* Recent Bookmarks */}
-      {bookmarks && bookmarks.length > 0 && (() => {
-        const recent = [...bookmarks]
+      {bookmarkList.length > 0 && (() => {
+        const recent = [...bookmarkList]
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .slice(0, 5);
         return (

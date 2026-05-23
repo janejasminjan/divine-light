@@ -1,5 +1,5 @@
 import express, { type Express } from "express";
-import cors from "cors";
+import cors, { type CorsOptions } from "cors";
 import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
 import { authMiddleware } from "./middlewares/authMiddleware";
@@ -14,7 +14,7 @@ const allowedOrigins = (process.env.ALLOWED_ORIGINS ?? "")
   .map((origin) => origin.trim())
   .filter(Boolean);
 
-const corsOrigin: Parameters<typeof cors>[0]["origin"] =
+const corsOrigin: CorsOptions["origin"] =
   allowedOrigins.length > 0
     ? allowedOrigins
     : process.env.NODE_ENV === "development"

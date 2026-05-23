@@ -51,7 +51,7 @@ function AppContent() {
 
   const profileRecord =
     profile && typeof profile === "object" && !Array.isArray(profile)
-      ? (profile as Record<string, unknown>)
+      ? (profile as unknown as Record<string, unknown>)
       : null;
   const serverOnboardingCompleted = profileRecord?.onboardingCompleted === true;
 

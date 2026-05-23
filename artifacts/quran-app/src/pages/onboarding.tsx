@@ -10,11 +10,18 @@ import { Input } from "@/components/ui/input";
 import { Book, Brain, Target, Globe } from "lucide-react";
 
 export default function Onboarding() {
+  interface OnboardingFormState {
+    displayName: string;
+    goal: OnboardingBodyGoal;
+    level: OnboardingBodyLevel;
+    dailyDurationMinutes: number;
+  }
+
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<OnboardingFormState>({
     displayName: "",
     goal: OnboardingBodyGoal.all,
     level: OnboardingBodyLevel.beginner,

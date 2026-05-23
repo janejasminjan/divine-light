@@ -1040,7 +1040,7 @@ const ReadingViewPanel = memo(function ReadingViewPanel({
                 <span
                   key={i}
                   className={`inline transition-colors duration-75 ${
-                    lit ? "text-primary bg-primary/15 rounded px-[0.2em] py-[0.5em]" : ""
+                    lit ? "text-primary" : ""
                   }`}
                   onClick={tajweedTapExplain ? (e) => {
                     const rule = getRuleFromElement(
@@ -1061,8 +1061,8 @@ const ReadingViewPanel = memo(function ReadingViewPanel({
               return (
                 <span
                   key={i}
-                  className={`inline transition-all duration-75 ${
-                    lit ? "text-primary bg-primary/15 rounded px-[0.2em] py-[0.5em]" : ""
+                  className={`inline transition-colors duration-75 ${
+                    lit ? "text-primary" : ""
                   }`}
                 >
                   {word}{i < words.length - 1 ? " " : ""}

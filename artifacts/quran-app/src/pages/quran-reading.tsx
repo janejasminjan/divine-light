@@ -1618,6 +1618,16 @@ export default function QuranReading() {
   }, [surahNum, localReciter, scriptInfo.id]);
 
   /* ── Audio ───────────────────────────────────────────────── */
+  const destroyAudioElement = useCallback((audio: HTMLAudioElement | null) => {
+    if (!audio) return;
+    audio.muted = true;
+    audio.pause();
+    audio.onended = null;
+    audio.ontimeupdate = null;
+    audio.removeAttribute("src");
+    audio.load();
+  }, []);
+
   const stopAudio = useCallback(() => {
     cancelAnimationFrame(rafRef.current);
     rafRef.current = 0;
@@ -1626,12 +1636,10 @@ export default function QuranReading() {
       // Null the ref FIRST so any in-flight async callbacks (loadedmetadata,
       // seeked, doPlay) see audioRef.current !== old and bail out immediately.
       audioRef.current = null;
+      old.muted = true;
       old.pause();
       old.onended = null;
       old.ontimeupdate = null;
-      // Only abort the network load for per-ayah (islamic.network) elements.
-      // The persistent surah audio element (surahAudioRef) is kept alive so
-      // the browser preserves its buffer for instant seeks on the next play.
       if (old !== surahAudioRef.current) {
         old.removeAttribute("src");
         old.load();
@@ -1647,9 +1655,15 @@ export default function QuranReading() {
     cancelAnimationFrame(rafRef.current);
     rafRef.current = 0;
     if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.onended    = null;
-      audioRef.current.ontimeupdate = null;
+      const previousAudio = audioRef.current;
+      previousAudio.muted = true;
+      previousAudio.pause();
+      previousAudio.onended = null;
+      previousAudio.ontimeupdate = null;
+      if (previousAudio !== surahAudioRef.current) {
+        previousAudio.removeAttribute("src");
+        previousAudio.load();
+      }
     }
 
     const verseKey    = `${surahNum}:${ayahNumber}`;
@@ -1800,6 +1814,18 @@ export default function QuranReading() {
       audio.play().catch(() => stopAudio());
     }
   }, [surahNum, localReciter, speed, repeatMode, surah, stopAudio]);
+
+  useEffect(() => {
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
+      destroyAudioElement(audioRef.current);
+      destroyAudioElement(surahAudioRef.current);
+      audioRef.current = null;
+      surahAudioRef.current = null;
+      surahAudioUrlRef.current = "";
+    };
+  }, [destroyAudioElement]);
 
   const togglePlay = () => {
     if (isPlaying) {

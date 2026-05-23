@@ -1,4 +1,4 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type Request, type Response } from "express";
 import { z } from "zod";
 
 const router: IRouter = Router();
@@ -14,7 +14,7 @@ const hadithsQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(200).default(100),
 });
 
-function requireAuthenticatedUser(req: Parameters<typeof router.get>[1] extends (...args: infer A) => unknown ? A[0] : never, res: Parameters<typeof router.get>[1] extends (...args: infer A) => unknown ? A[1] : never): boolean {
+function requireAuthenticatedUser(req: Request, res: Response): boolean {
   if (!req.isAuthenticated()) {
     res.status(401).json({ error: "Authentication required" });
     return false;

@@ -49,20 +49,18 @@ export const Route = createFileRoute("/surah/$surahId")({
     ],
   }),
   validateSearch: zodValidator(searchSchema),
-  loaderDeps: ({ params, search }) => ({
-    surahNumber: Number(params.surahId),
+  loaderDeps: ({ search }) => ({
     lang: search.lang,
     reciter: search.reciter,
   }),
-  loader: async ({ context, deps }) => {
-    if (!Number.isFinite(deps.surahNumber) || deps.surahNumber < 1 || deps.surahNumber > 114) {
+  loader: async ({ context, deps, params }) => {
+    const surahNumber = Number(params.surahId);
+    if (!Number.isFinite(surahNumber) || surahNumber < 1 || surahNumber > 114) {
       throw notFound();
     }
 
     await context.queryClient.ensureQueryData(surahsQueryOptions);
-    return context.queryClient.ensureQueryData(
-      surahAyahsQueryOptions(deps.surahNumber, deps.lang, deps.reciter),
-    );
+    return context.queryClient.ensureQueryData(surahAyahsQueryOptions(surahNumber, deps.lang, deps.reciter));
   },
   component: SurahReaderPage,
 });

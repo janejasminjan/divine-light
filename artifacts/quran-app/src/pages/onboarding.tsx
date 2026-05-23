@@ -44,15 +44,13 @@ export default function Onboarding() {
         },
         onError: (error) => {
           if (error instanceof ApiError) {
-            if (error.status === 404 || error.status >= 500) {
-              markOnboardingCompletedLocally();
-              setLocation("/dashboard");
+            if (error.status < 500 && error.status !== 404) {
+              setSubmitError(`Setup failed (${error.status}). Please try again.`);
               return;
             }
-            setSubmitError(`Setup failed (${error.status}). Please try again.`);
-            return;
           }
-          setSubmitError("Setup failed. Please try again.");
+          markOnboardingCompletedLocally();
+          setLocation("/dashboard");
         },
       }
     );

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { ApiError, useCompleteOnboarding, OnboardingBodyGoal, OnboardingBodyLevel, getGetUserProfileQueryKey } from "@workspace/api-client-react";
+import { OnboardingBodyGoal, OnboardingBodyLevel, getGetUserProfileQueryKey } from "@workspace/api-client-react";
 import { markOnboardingCompletedLocally } from "@/lib/local-onboarding";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -21,8 +21,6 @@ export default function Onboarding() {
     dailyDurationMinutes: 15,
   });
 
-  const completeOnboarding = useCompleteOnboarding();
-
   const handleNext = () => {
     if (step < 3) setStep(step + 1);
   };
@@ -32,7 +30,6 @@ export default function Onboarding() {
   };
 
   const handleSubmit = () => {
-    if (completeOnboarding.isPending) return;
     setSubmitError(null);
     markOnboardingCompletedLocally();
     queryClient.invalidateQueries({ queryKey: getGetUserProfileQueryKey() });

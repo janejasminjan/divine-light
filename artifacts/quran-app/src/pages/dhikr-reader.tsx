@@ -436,6 +436,7 @@ function SectionBlock({ section, fontSizeIdx, showTranslit, showTranslation, cou
 export default function DhikrReader() {
   const { collectionId } = useParams<{ collectionId: string }>();
   const collection = getCollection(collectionId ?? "");
+  const isDuaSubahCollection = collection?.id === DUA_SUBAH_COLLECTION_ID;
 
   /* Settings — persisted */
   const [fontSizeIdx, setFontSizeIdx] = useState<number>(() => {
@@ -800,16 +801,29 @@ export default function DhikrReader() {
 
               {/* Sections */}
               {collection.sections.map((section) => (
-                <SectionBlock
-                  key={section.id}
-                  section={section}
-                  fontSizeIdx={fontSizeIdx}
-                  showTranslit={showTranslit}
-                  showTranslation={showTranslation}
-                  counters={counters}
-                  onIncrement={increment}
-                  onReset={reset}
-                />
+                isDuaSubahCollection ? (
+                  <DuaSubahPage
+                    key={section.id}
+                    section={section}
+                    fontSizeIdx={fontSizeIdx}
+                    showTranslit={showTranslit}
+                    showTranslation={showTranslation}
+                    counters={counters}
+                    onIncrement={increment}
+                    onReset={reset}
+                  />
+                ) : (
+                  <SectionBlock
+                    key={section.id}
+                    section={section}
+                    fontSizeIdx={fontSizeIdx}
+                    showTranslit={showTranslit}
+                    showTranslation={showTranslation}
+                    counters={counters}
+                    onIncrement={increment}
+                    onReset={reset}
+                  />
+                )
               ))}
 
               {/* Closing note */}

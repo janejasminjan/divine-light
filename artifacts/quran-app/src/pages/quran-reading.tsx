@@ -1340,6 +1340,10 @@ export default function QuranReading() {
     query: { queryKey: getGetMemorizationPlanQueryKey({ surahId: surahNum }) },
   });
   const { data: bookmarks } = useGetBookmarks({ query: { queryKey: getGetBookmarksQueryKey() } });
+  const bookmarkList = useMemo(
+    () => (Array.isArray(bookmarks) ? bookmarks : []),
+    [bookmarks],
+  );
   const addToMemorization = useAddToMemorizationPlan();
   const createBookmark = useCreateBookmark();
   const deleteBookmark = useDeleteBookmark();
@@ -1835,7 +1839,7 @@ export default function QuranReading() {
 
   const handleAutoBookmark = useCallback((ayahNumber: number) => {
     if (!isDailyMode || manuallyBookmarkedRef.current) return;
-    const existing = bookmarks?.find(b => b.note === AUTO_BOOKMARK_NOTE);
+    const existing = bookmarkList.find(b => b.note === AUTO_BOOKMARK_NOTE);
     // Same position already saved — nothing to do
     if (existing && existing.surahId === surahNum && existing.ayahNumber === ayahNumber) return;
     const createNew = () => {
@@ -1852,7 +1856,7 @@ export default function QuranReading() {
     } else {
       createNew();
     }
-  }, [isDailyMode, bookmarks, surahNum, createBookmark, deleteBookmark, queryClient]);
+  }, [isDailyMode, bookmarkList, surahNum, createBookmark, deleteBookmark, queryClient]);
 
   // Keep a stable ref so IntersectionObserver closure always uses latest version
   const handleAutoBookmarkRef = useRef(handleAutoBookmark);
@@ -1860,7 +1864,7 @@ export default function QuranReading() {
 
   // Auto-bookmark is excluded from the "Saved" indicator — only manual bookmarks count
   const isBookmarked = (n: number) =>
-    bookmarks?.some(b => b.surahId === surahNum && b.ayahNumber === n && b.note !== AUTO_BOOKMARK_NOTE);
+    bookmarkList.some(b => b.surahId === surahNum && b.ayahNumber === n && b.note !== AUTO_BOOKMARK_NOTE);
   const isInPlan = (n: number) => plan?.some(e => e.ayahNumber === n);
   const getTranslation = (n: number) => translationAyahs.find(t => t.numberInSurah === n)?.text ?? "";
 

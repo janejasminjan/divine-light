@@ -8,7 +8,7 @@
     "check:pwa-assets": "node ./scripts/validate-pwa-assets.mjs prebuild",
     "check:pwa-assets:dist": "node ./scripts/validate-pwa-assets.mjs postbuild",
     "build": "npm run check:pwa-assets && vite build --config vite.config.ts && npm run check:pwa-assets:dist",
-    "dist-check": "npm run typecheck",
+    "dist-check": "npm --prefix ../.. run typecheck:libs && npm run typecheck",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },

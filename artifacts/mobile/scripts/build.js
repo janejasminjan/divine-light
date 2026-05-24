@@ -67,10 +67,7 @@ function getDeploymentDomain() {
     return stripProtocol(process.env.EXPO_PUBLIC_DOMAIN);
   }
 
-  console.warn(
-    "WARN: No deployment domain found; falling back to localhost for build validation.",
-  );
-  return "localhost";
+  return null;
 }
 
 function prepareDirectories(timestamp) {
@@ -510,6 +507,12 @@ async function main() {
   setupSignalHandlers();
 
   const domain = getDeploymentDomain();
+  if (!domain) {
+    console.log(
+      "No deployment domain detected; skipping static mobile export for validation.",
+    );
+    process.exit(0);
+  }
   const expoPublicReplId = getExpoPublicReplId();
   const baseUrl = `https://${domain}`;
   const timestamp = `${Date.now()}-${process.pid}`;

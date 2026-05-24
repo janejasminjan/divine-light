@@ -94,7 +94,7 @@ function AppContent() {
     </Layout>
   );
 }
-
+// force network re-route update
 function App() {
   return (
     <QueryClientProvider client={queryClient}>

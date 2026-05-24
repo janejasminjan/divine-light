@@ -5,9 +5,9 @@
   "scripts": {
     "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
     "dev": "PORT=8080 BASE_PATH=/ bun run --cwd artifacts/quran-app dev",
-    "build": "bun run --cwd artifacts/quran-app typecheck && PORT=8080 BASE_PATH=/ bun run --cwd artifacts/quran-app build",
+    "build": "bun run typecheck:libs && bun run --cwd artifacts/quran-app typecheck && PORT=8080 BASE_PATH=/ bun run --cwd artifacts/quran-app build",
     "typecheck:libs": "tsc --build",
-    "typecheck": "bun run --cwd artifacts/quran-app typecheck"
+    "typecheck": "bun run typecheck:libs && bun run --cwd artifacts/quran-app typecheck"
   },
   "private": true,
   "devDependencies": {

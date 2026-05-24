@@ -139,7 +139,7 @@ export default function ProgressPage() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-3">
-              {p.badges.map((badge) => (
+              {p.badges.map((badge: { id: string; name: string; description: string }) => (
                 <motion.div
                   key={badge.id}
                   initial={{ scale: 0 }}

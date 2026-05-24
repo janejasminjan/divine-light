@@ -15,10 +15,10 @@ paths = [ "/" ]
 localPort = 18306
 
 [services.development]
-run = "pnpm --filter @workspace/quran-app run dev"
+run = "bun run --cwd artifacts/quran-app dev"
 
 [services.production]
-build = [ "pnpm", "--filter", "@workspace/quran-app", "run", "build" ]
+build = [ "bun", "run", "build" ]
 publicDir = "artifacts/quran-app/dist/public"
 serve = "static"
 

@@ -11,9 +11,8 @@
   },
   "private": true,
   "devDependencies": {
-    "babel-preset-expo": "^56.0.12",
-    "prettier": "^3.8.1",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "prettier": "^3.8.1"
   },
   "dependencies": {
     "@replit/vite-plugin-cartographer": "",

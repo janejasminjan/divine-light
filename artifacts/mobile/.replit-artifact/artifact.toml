@@ -16,11 +16,11 @@ paths = [ "/mobile/" ]
 localPort = 18115
 
 [services.development]
-run = "bun run --cwd artifacts/mobile dev"
+run = "pnpm --filter @workspace/mobile run dev"
 
 [services.production]
-build = [ "bun", "run", "--cwd", "artifacts/mobile", "build" ]
-run = [ "bun", "run", "--cwd", "artifacts/mobile", "serve" ]
+build = [ "pnpm", "--filter", "@workspace/mobile", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/mobile", "run", "serve" ]
 
 [services.env]
 PORT = "18115"

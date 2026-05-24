@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "hello": "tsx ./src/hello.ts",
-    "dist-check": "bun run typecheck",
+    "dist-check": "npm run typecheck",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {

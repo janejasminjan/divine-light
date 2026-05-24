@@ -4,12 +4,23 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
+function parsePort(value: string | undefined, fallback = 8080) {
+  const parsed = value ? Number(value) : Number.NaN;
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function normalizeBasePath(value: string | undefined, fallback = "/") {
+  const trimmed = value?.trim();
+  if (!trimmed) return fallback;
+  const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return withLeadingSlash.endsWith("/") ? withLeadingSlash : `${withLeadingSlash}/`;
+}
+
 const rawPort = process.env.PORT;
-const parsedPort = rawPort ? Number(rawPort) : Number.NaN;
-const port = Number.isFinite(parsedPort) && parsedPort > 0 ? parsedPort : 8080;
+const port = parsePort(rawPort, 8080);
 
 const rawBasePath = process.env.BASE_PATH;
-const basePath = rawBasePath && rawBasePath.trim().length > 0 ? rawBasePath : "/";
+const basePath = normalizeBasePath(rawBasePath, "/");
 
 export default defineConfig({
   base: basePath,

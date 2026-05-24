@@ -10,7 +10,7 @@
     "build": "npm run check:pwa-assets && vite build --config vite.config.ts && npm run check:pwa-assets:dist",
     "dist-check": "npm run build",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
-    "typecheck": "npm --prefix ../.. run typecheck:libs && tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.10.0",

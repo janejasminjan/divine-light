@@ -7,10 +7,10 @@
     "dev": "vite --config vite.config.ts --host 0.0.0.0",
     "check:pwa-assets": "node ./scripts/validate-pwa-assets.mjs prebuild",
     "check:pwa-assets:dist": "node ./scripts/validate-pwa-assets.mjs postbuild",
-    "build": "bun run check:pwa-assets && vite build --config vite.config.ts && bun run check:pwa-assets:dist",
-    "dist-check": "bun run build",
+    "build": "npm run check:pwa-assets && vite build --config vite.config.ts && npm run check:pwa-assets:dist",
+    "dist-check": "npm run build",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
-    "typecheck": "bun run --cwd ../.. typecheck:libs && tsc -p tsconfig.json --noEmit"
+    "typecheck": "npm --prefix ../.. run typecheck:libs && tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.10.0",

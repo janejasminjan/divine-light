@@ -4,11 +4,11 @@
   "license": "MIT",
   "scripts": {
     "preinstall": "node -e \"const fs=require('fs'); ['package-lock.json','yarn.lock'].forEach(f=>{try{fs.rmSync(f,{force:true})}catch{}}); const ua=process.env.npm_config_user_agent||''; if(!/(^|\\s)pnpm\\//.test(ua) && !/(^|\\s)bun\\//.test(ua)){console.warn('Recommended package manager: pnpm');}\"",
-    "dev": "PORT=8080 BASE_PATH=/ bun run --cwd artifacts/quran-app dev",
-    "build": "bun run typecheck:libs && bun run --cwd artifacts/quran-app typecheck && PORT=8080 BASE_PATH=/ bun run --cwd artifacts/quran-app build",
-    "dist-check": "bun run build",
+    "dev": "PORT=8080 BASE_PATH=/ npm --prefix artifacts/quran-app run dev",
+    "build": "npm run typecheck:libs && npm --prefix artifacts/quran-app run typecheck && PORT=8080 BASE_PATH=/ npm --prefix artifacts/quran-app run build",
+    "dist-check": "npm run build",
     "typecheck:libs": "tsc --build",
-    "typecheck": "bun run typecheck:libs && bun run --cwd artifacts/quran-app typecheck"
+    "typecheck": "npm run typecheck:libs && npm --prefix artifacts/quran-app run typecheck"
   },
   "private": true,
   "devDependencies": {
